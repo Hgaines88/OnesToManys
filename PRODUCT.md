@@ -6,9 +6,9 @@ A public-facing archive that helps people discover which individual designers cr
 
 ## Version 1 user stories
 
-- As a visitor, I can view all archived designers so I can discover who created fashio$
-- As a visitor, I can open a designer’s profile so I can learn about their career.
-- As a visitor, I can view the collections credited to a designer across different lab$
+- As a visitor, I can view all archived designers so I can discover who created fashion collections.
+- As a visitor, I can view the collections credited to a designer across different labels and seasons.
+- As a visitor, I can open a collection to see its label, season, year, status, piece count, and description.
 - As a visitor, I can open a collection to see its label, season, year, status, piece $
 - As a user, I can add, edit, and delete designer records.
 - As a user, I can add, edit, and delete collection records.
