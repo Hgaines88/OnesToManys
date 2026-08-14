@@ -88,6 +88,14 @@ VALUES
         NULL,
         NULL,
         'Designer and founder of Comme des Garçons.'
+    ),
+    (
+        11,
+        'Telfar Clemens',
+        'Liberian-American',
+        1985,
+        'https://telfar.net',
+        'Founder of Telfar, a New York label known for accessible, unisex fashion and its community-focused approach.'
     );
 
 
@@ -269,4 +277,26 @@ VALUES
         'archived',
         NULL,
         'Rei Kawakubo challenged conventional silhouettes using asymmetrical padded forms.'
+    ),
+    (
+        15,
+        2,
+        'Anonymous Club',
+        NULL,
+        'Resort',
+        2024,
+        'archived',
+        NULL,
+        'The second Anonymous Club installment presented wardrobe staples through Shayne Oliver''s design language.'
+    ),
+    (
+        16,
+        11,
+        'Telfar',
+        NULL,
+        'Spring/Summer',
+        2020,
+        'archived',
+        NULL,
+        'A Paris presentation pairing the collection with the collaborative film The World Isn''t Everything.'
     );
