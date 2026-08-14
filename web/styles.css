@@ -1,0 +1,50 @@
+body {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px;
+    color: #222;
+    background: #f7f5f1;
+    font-family: Georgia, serif;
+    line-height: 1.6;
+}
+
+header,
+nav,
+main {
+    margin-bottom: 32px;
+}
+
+h1,
+h2,
+h3 {
+    line-height: 1.2;
+}
+
+a {
+    color: #663c2f;
+}
+
+a:hover {
+    color: #a35f49;
+}
+
+ul {
+    padding: 0;
+    list-style: none;
+}
+
+li {
+    margin-bottom: 16px;
+    padding: 16px;
+    background: white;
+    border: 1px solid #ddd7ce;
+}
+
+#status {
+    color: #666;
+}
+
+#designer-biography,
+#collection-description {
+    max-width: 65ch;
+}
