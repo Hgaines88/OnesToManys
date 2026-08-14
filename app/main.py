@@ -63,3 +63,46 @@ def get_designer(designer_id: int):
         return dict(row)
     finally:
         connection.close()
+
+@app.get("/designers/{designer_id}/collections")
+def list_designer_collections(designer_id: int):
+    connection = connect()
+
+    try:
+        designer = connection.execute(
+            """
+            SELECT id
+            FROM designers
+            WHERE id = ?
+            """,
+            (designer_id,),
+        ).fetchone()
+
+        if designer is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Designer not found",
+            )
+
+        rows = connection.execute(
+            """
+            SELECT
+                id,
+                designer_id,
+                label,
+                name,
+                season,
+                release_year,
+                status,
+                piece_count,
+                description
+            FROM collections
+            WHERE designer_id = ?
+            ORDER BY release_year DESC, season
+            """,
+            (designer_id,),
+        ).fetchall()
+
+        return [dict(row) for row in rows]
+    finally:
+        connection.close()
