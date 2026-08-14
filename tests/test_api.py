@@ -47,9 +47,23 @@ def test_list_designers(client):
 
     designers = response.json()
 
-    assert len(designers) == 2
-    assert designers[0]["full_name"] == "Sarah Burton"
-    assert designers[1]["full_name"] == "Shayne Oliver"
+    assert len(designers) == 10
+    designer_names = {
+        designer["full_name"]
+        for designer in designers
+    }
+    assert designer_names == {
+        "Demna",
+        "Grace Wales Bonner",
+        "Hussein Chalayan",
+        "Jonathan Anderson",
+        "Lee Alexander McQueen",
+        "Miuccia Prada",
+        "Rei Kawakubo",
+        "Sarah Burton",
+        "Shayne Oliver",
+        "Virgil Abloh",
+    }
 
 def test_get_designer(client):
     response = client.get("/designers/1")
@@ -74,9 +88,15 @@ def test_list_collections_for_designer(client):
 
     collections = response.json()
 
-    assert len(collections) == 1
-    assert collections[0]["label"] == "Givenchy"
-    assert collections[0]["designer_id"] == 1
+    assert len(collections) == 2
+    assert all(
+        collection["designer_id"] == 1
+        for collection in collections
+    )
+    assert {
+        collection["label"]
+        for collection in collections
+    } == {"Alexander McQueen", "Givenchy"}
 
 def test_deleting_designer_cascades_to_collections(client):
     designer_response = client.post(
