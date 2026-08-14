@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+    <link rel="stylesheet" href="/styles.css">
+    <title>Add Collection | Collection Archive</title>
+</head>
+<body>
+    <nav>
+        <a href="/">Collection Archive</a>
+    </nav>
+
+    <main>
+        <h1>Add a Collection</h1>
+        <p id="status"></p>
+
+        <form id="collection-form">
+            <p>
+                <label for="label">Label or fashion house</label><br>
+                <input id="label" name="label" required>
+            </p>
+
+            <p>
+                <label for="name">Collection name</label><br>
+                <input id="name" name="name">
+            </p>
+
+            <p>
+                <label for="season">Season</label><br>
+                <input id="season" name="season" required>
+            </p>
+
+            <p>
+                <label for="release-year">Release year</label><br>
+                <input
+                    id="release-year"
+                    name="release_year"
+                    type="number"
+                    min="1900"
+                    max="2100"
+                    required
+                >
+            </p>
+
+            <p>
+                <label for="collection-status">Status</label><br>
+                <select
+                    id="collection-status"
+                    name="status"
+                    required
+                >
+                    <option value="concept">Concept</option>
+                    <option value="in-production">In production</option>
+                    <option value="released">Released</option>
+                    <option value="archived">Archived</option>
+                </select>
+            </p>
+
+            <p>
+                <label for="piece-count">Piece count</label><br>
+                <input
+                    id="piece-count"
+                    name="piece_count"
+                    type="number"
+                    min="0"
+                >
+            </p>
+
+            <p>
+                <label for="description">Description</label><br>
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="6"
+                ></textarea>
+            </p>
+
+            <button type="submit">Save collection</button>
+        </form>
+    </main>
+
+    <script src="/collection-form.js" defer></script>
+</body>
+</html>

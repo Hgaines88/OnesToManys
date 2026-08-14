@@ -46,6 +46,9 @@ async function loadDesigner() {
         document.querySelector("#designer-biography").textContent =
             designer.biography || "No biography is available.";
 
+        document.querySelector("#add-collection-link").href =
+            `/collection-form.html?designer_id=${designerId}`;
+
         const collectionList =
             document.querySelector("#collection-list");
 
