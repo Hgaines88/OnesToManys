@@ -89,6 +89,39 @@ async function loadDesigner() {
 
         status.textContent = "";
         profile.hidden = false;
+
+        const deleteButton =
+    document.querySelector("#delete-designer");
+
+    deleteButton.addEventListener("click", async function () {
+        const confirmed = window.confirm(
+            "Delete this designer and all of their collections permanently?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            const deleteResponse = await fetch(
+                `/designers/${designerId}`,
+                {
+                    method: "DELETE",
+                }
+            );
+
+            if (!deleteResponse.ok) {
+                throw new Error(
+                    "Designer could not be deleted"
+                );
+            }
+
+            window.location.href = "/";
+        } catch (error) {
+            status.textContent = error.message;
+        }
+    });
+
     } catch (error) {
         status.textContent =
             "This designer profile could not be loaded.";
