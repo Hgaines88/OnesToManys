@@ -388,3 +388,137 @@ def create_collection(payload: CollectionCreate):
 
     finally:
         connection.close()
+
+@app.put("/collections/{collection_id}")
+def update_collection(
+    collection_id: int,
+    payload: CollectionCreate,
+):
+    connection = connect()
+
+    try:
+        existing_collection = connection.execute(
+            """
+            SELECT id
+            FROM collections
+            WHERE id = ?
+            """,
+            (collection_id,),
+        ).fetchone()
+
+        if existing_collection is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Collection not found",
+            )
+
+        designer = connection.execute(
+            """
+            SELECT id
+            FROM designers
+            WHERE id = ?
+            """,
+            (payload.designer_id,),
+        ).fetchone()
+
+        if designer is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Designer not found",
+            )
+
+        connection.execute(
+            """
+            UPDATE collections
+            SET
+                designer_id = ?,
+                label = ?,
+                name = ?,
+                season = ?,
+                release_year = ?,
+                status = ?,
+                piece_count = ?,
+                description = ?
+            WHERE id = ?
+            """,
+            (
+                payload.designer_id,
+                payload.label,
+                payload.name,
+                payload.season,
+                payload.release_year,
+                payload.status,
+                payload.piece_count,
+                payload.description,
+                collection_id,
+            ),
+        )
+
+        connection.commit()
+
+        updated_collection = connection.execute(
+            """
+            SELECT *
+            FROM collections
+            WHERE id = ?
+            """,
+            (collection_id,),
+        ).fetchone()
+
+        return dict(updated_collection)
+
+    except sqlite3.IntegrityError as error:
+        connection.rollback()
+
+        if "UNIQUE constraint failed" in str(error):
+            raise HTTPException(
+                status_code=409,
+                detail="This collection already exists",
+            ) from error
+
+        raise HTTPException(
+            status_code=400,
+            detail="Collection violates a database constraint",
+        ) from error
+
+    finally:
+        connection.close()
+
+@app.delete(
+    "/collections/{collection_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_collection(collection_id: int):
+    connection = connect()
+
+    try:
+        existing_collection = connection.execute(
+            """
+            SELECT id
+            FROM collections
+            WHERE id = ?
+            """,
+            (collection_id,),
+        ).fetchone()
+
+        if existing_collection is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Collection not found",
+            )
+
+        connection.execute(
+            """
+            DELETE FROM collections
+            WHERE id = ?
+            """,
+            (collection_id,),
+        )
+
+        connection.commit()
+
+        return Response(
+            status_code=status.HTTP_204_NO_CONTENT
+        )
+    finally:
+        connection.close()
