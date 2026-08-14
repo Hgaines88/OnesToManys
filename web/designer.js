@@ -29,6 +29,8 @@ async function loadDesigner() {
 
         const designer = await designerResponse.json();
         const collections = await collectionsResponse.json();
+        document.querySelector("#edit-designer").href =
+            `/designer-form.html?id=${designer.id}`;
 
         document.querySelector("#designer-name").textContent =
             designer.full_name;
@@ -39,6 +41,23 @@ async function loadDesigner() {
                 ? `Born ${designer.birth_year}`
                 : null,
         ].filter(Boolean);
+
+        const websiteContainer =
+            document.querySelector("#designer-website");
+
+        if (designer.website) {
+            const websiteLink = document.createElement("a");
+
+            websiteLink.href = designer.website;
+            websiteLink.textContent = designer.website;
+            websiteLink.target = "_blank";
+            websiteLink.rel = "noopener noreferrer";
+
+            websiteContainer.append(websiteLink);
+        } else {
+            websiteContainer.textContent =
+                "No website is available.";
+        }
 
         document.querySelector("#designer-details").textContent =
             details.join(" · ");

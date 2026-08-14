@@ -15,7 +15,7 @@
     </nav>
 
     <main>
-        <h1>Add a Designer</h1>
+        <h1 id="form-title">Add a Designer</h1>
 
         <p id="status"></p>
 
@@ -55,7 +55,9 @@
                 <input
                     id="website"
                     name="website"
-                    type="url"
+                    type="text"
+                    inputmode="url"
+                    placeholder="www.example.com"
                 >
             </p>
 
@@ -68,7 +70,9 @@
                 ></textarea>
             </p>
 
-            <button type="submit">Save designer</button>
+            <button id="submit-button" type="submit">
+                Save designer
+            </button>
         </form>
     </main>
 
