@@ -77,3 +77,47 @@ def test_list_collections_for_designer(client):
     assert len(collections) == 1
     assert collections[0]["label"] == "Givenchy"
     assert collections[0]["designer_id"] == 1
+
+def test_deleting_designer_cascades_to_collections(client):
+    designer_response = client.post(
+        "/designers",
+        json={
+            "full_name": "Temporary Cascade Designer",
+            "nationality": None,
+            "birth_year": None,
+            "website": None,
+            "biography": None,
+        },
+    )
+
+    assert designer_response.status_code == 201
+    designer_id = designer_response.json()["id"]
+
+    collection_response = client.post(
+        "/collections",
+        json={
+            "designer_id": designer_id,
+            "label": "Temporary Label",
+            "name": None,
+            "season": "Resort",
+            "release_year": 2026,
+            "status": "concept",
+            "piece_count": None,
+            "description": "Temporary cascade test.",
+        },
+    )
+
+    assert collection_response.status_code == 201
+    collection_id = collection_response.json()["id"]
+
+    delete_response = client.delete(
+        f"/designers/{designer_id}"
+    )
+
+    assert delete_response.status_code == 204
+
+    missing_collection_response = client.get(
+        f"/collections/{collection_id}"
+    )
+
+    assert missing_collection_response.status_code == 404
