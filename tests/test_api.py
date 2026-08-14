@@ -55,7 +55,7 @@ def test_list_designers(client):
     assert designer_names == {
         "Demna",
         "Grace Wales Bonner",
-        "Hussein Chalayan",
+        "Junya Watanabe",
         "Jonathan Anderson",
         "Lee Alexander McQueen",
         "Miuccia Prada",

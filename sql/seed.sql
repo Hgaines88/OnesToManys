@@ -67,11 +67,11 @@ VALUES
     ),
     (
         8,
-        'Hussein Chalayan',
-        'Cypriot-British',
+        'Junya Watanabe',
+        'Japanese',
+        1961,
         NULL,
-        NULL,
-        'Designer known for conceptual and technology-driven fashion.'
+        'Designer who began his career at Comme des Garçons and launched his namesake line within the house.'
     ),
     (
         9,
