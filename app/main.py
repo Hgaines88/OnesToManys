@@ -522,3 +522,35 @@ def delete_collection(collection_id: int):
         )
     finally:
         connection.close()
+
+
+@app.get("/collections")
+def list_collections():
+    connection = connect()
+
+    try:
+        rows = connection.execute(
+            """
+            SELECT
+                collections.id,
+                collections.designer_id,
+                designers.full_name AS lead_designer,
+                collections.label,
+                collections.name,
+                collections.season,
+                collections.release_year,
+                collections.status,
+                collections.piece_count,
+                collections.description
+            FROM collections
+            JOIN designers
+                ON designers.id = collections.designer_id
+            ORDER BY
+                collections.release_year DESC,
+                collections.label
+            """
+        ).fetchall()
+
+        return [dict(row) for row in rows]
+    finally:
+        connection.close()
