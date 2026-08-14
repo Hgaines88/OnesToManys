@@ -52,9 +52,15 @@ async function loadDesigner() {
         for (const collection of collections) {
             const item = document.createElement("li");
 
-            item.textContent =
+            const link = document.createElement("a");
+
+            link.textContent =
                 `${collection.label} — ` +
                 `${collection.season} ${collection.release_year}`;
+
+            link.href = `/collection.html?id=${collection.id}`;
+
+            item.append(link);
 
             collectionList.append(item);
         }
