@@ -1,7 +1,7 @@
 import sqlite3
 from fastapi import FastAPI, HTTPException, Response, status
 from app.database import connect
-from app.schemas import DesignerCreate
+from app.schemas import CollectionCreate, DesignerCreate
 
 
 app = FastAPI(title="Collection Archive")
@@ -307,5 +307,84 @@ def delete_designer(designer_id: int):
         return Response(
             status_code=status.HTTP_204_NO_CONTENT
         )
+    finally:
+        connection.close()
+
+@app.post(
+    "/collections",
+    status_code=status.HTTP_201_CREATED,
+)
+def create_collection(payload: CollectionCreate):
+    connection = connect()
+
+    try:
+        designer = connection.execute(
+            """
+            SELECT id
+            FROM designers
+            WHERE id = ?
+            """,
+            (payload.designer_id,),
+        ).fetchone()
+
+        if designer is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Designer not found",
+            )
+
+        cursor = connection.execute(
+            """
+            INSERT INTO collections (
+                designer_id,
+                label,
+                name,
+                season,
+                release_year,
+                status,
+                piece_count,
+                description
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                payload.designer_id,
+                payload.label,
+                payload.name,
+                payload.season,
+                payload.release_year,
+                payload.status,
+                payload.piece_count,
+                payload.description,
+            ),
+        )
+
+        connection.commit()
+
+        row = connection.execute(
+            """
+            SELECT *
+            FROM collections
+            WHERE id = ?
+            """,
+            (cursor.lastrowid,),
+        ).fetchone()
+
+        return dict(row)
+
+    except sqlite3.IntegrityError as error:
+        connection.rollback()
+
+        if "UNIQUE constraint failed" in str(error):
+            raise HTTPException(
+                status_code=409,
+                detail="This collection already exists",
+            ) from error
+
+        raise HTTPException(
+            status_code=400,
+            detail="Collection violates a database constraint",
+        ) from error
+
     finally:
         connection.close()
