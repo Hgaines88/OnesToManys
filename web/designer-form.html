@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+    <link rel="stylesheet" href="/styles.css">
+    <title>Add Designer | Collection Archive</title>
+</head>
+<body>
+    <nav>
+        <a href="/">Collection Archive</a>
+    </nav>
+
+    <main>
+        <h1>Add a Designer</h1>
+
+        <p id="status"></p>
+
+        <form id="designer-form">
+            <p>
+                <label for="full-name">Full name</label><br>
+                <input
+                    id="full-name"
+                    name="full_name"
+                    type="text"
+                    required
+                >
+            </p>
+
+            <p>
+                <label for="nationality">Nationality</label><br>
+                <input
+                    id="nationality"
+                    name="nationality"
+                    type="text"
+                >
+            </p>
+
+            <p>
+                <label for="birth-year">Birth year</label><br>
+                <input
+                    id="birth-year"
+                    name="birth_year"
+                    type="number"
+                    min="1800"
+                    max="2100"
+                >
+            </p>
+
+            <p>
+                <label for="website">Website</label><br>
+                <input
+                    id="website"
+                    name="website"
+                    type="url"
+                >
+            </p>
+
+            <p>
+                <label for="biography">Biography</label><br>
+                <textarea
+                    id="biography"
+                    name="biography"
+                    rows="6"
+                ></textarea>
+            </p>
+
+            <button type="submit">Save designer</button>
+        </form>
+    </main>
+
+    <script src="/designer-form.js" defer></script>
+</body>
+</html>
