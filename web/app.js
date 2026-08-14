@@ -16,9 +16,12 @@ async function loadDesigners() {
         for (const designer of designers) {
             const listItem = document.createElement("li");
             const heading = document.createElement("h3");
+            const link = document.createElement("a");
             const details = document.createElement("p");
 
-            heading.textContent = designer.full_name;
+            link.textContent = designer.full_name;
+            link.href = `/designer.html?id=${designer.id}`;
+            heading.append(link);
 
             const detailParts = [];
 
