@@ -2,6 +2,7 @@ import sqlite3
 from fastapi import FastAPI, HTTPException, Response, status
 from app.database import connect
 from app.schemas import CollectionCreate, DesignerCreate
+from fastapi.staticfiles import StaticFiles
 
 
 app = FastAPI(title="Collection Archive")
@@ -553,3 +554,9 @@ def list_collections():
         return [dict(row) for row in rows]
     finally:
         connection.close()
+
+app.mount(
+    "/",
+    StaticFiles(directory="web", html=True),
+    name="web",
+)
