@@ -143,8 +143,8 @@ VALUES (
             'Spring/Summer',
             2024,
             'released',
-            45,
-            'The collection celebrated Afro-Atlantic cultural traditions through contemporary fashion.'
+            34,
+            'The Spring/Summer 2024 menswear collection was titled Marathon.'
         ),
         (
             5,
@@ -165,8 +165,8 @@ VALUES (
             'Spring/Summer',
             2024,
             'released',
-            55,
-            'The collection explored gender fluidity and contemporary design.'
+            NULL,
+            'The collection reworked familiar wardrobe pieces with exaggerated proportions and unexpected materials.'
         ),
         (
             7,
@@ -177,7 +177,7 @@ VALUES (
             2017,
             'archived',
             NULL,
-            'A Hood By Air collection presented during New York Fashion Week.'
+            'A Hood By Air collection developed with Wench, Shayne Oliver and Arca''s musical project.'
         ),
         (
             8,
@@ -201,3 +201,72 @@ VALUES (
             NULL,
             'A denim-focused capsule created for the Diesel Red Tag Project.'
         );
+
+
+INSERT INTO collections (
+    id,
+    designer_id,
+    label,
+    name,
+    season,
+    release_year,
+    status,
+    piece_count,
+    description
+)
+VALUES
+    (
+        10,
+        6,
+        'Balenciaga',
+        NULL,
+        'Spring/Summer',
+        2023,
+        'archived',
+        NULL,
+        'A Demna collection presented on a mud-covered runway in Paris.'
+    ),
+    (
+        11,
+        7,
+        'Louis Vuitton',
+        NULL,
+        'Spring/Summer',
+        2019,
+        'archived',
+        NULL,
+        'Virgil Abloh''s debut menswear collection for Louis Vuitton.'
+    ),
+    (
+        12,
+        8,
+        'Junya Watanabe MAN',
+        NULL,
+        'Spring/Summer',
+        2025,
+        'archived',
+        NULL,
+        'A menswear collection combining formalwear with a punk sensibility.'
+    ),
+    (
+        13,
+        9,
+        'Prada',
+        NULL,
+        'Spring/Summer',
+        2012,
+        'archived',
+        NULL,
+        'A Miuccia Prada collection drawing on 1950s automobile imagery.'
+    ),
+    (
+        14,
+        10,
+        'Comme des Garçons',
+        'Body Meets Dress, Dress Meets Body',
+        'Spring/Summer',
+        1997,
+        'archived',
+        NULL,
+        'Rei Kawakubo challenged conventional silhouettes using asymmetrical padded forms.'
+    );

@@ -98,6 +98,25 @@ def test_list_collections_for_designer(client):
         for collection in collections
     } == {"Alexander McQueen", "Givenchy"}
 
+
+def test_every_seeded_designer_has_a_collection(client):
+    designers_response = client.get("/designers")
+    collections_response = client.get("/collections")
+
+    assert designers_response.status_code == 200
+    assert collections_response.status_code == 200
+
+    designer_ids = {
+        designer["id"]
+        for designer in designers_response.json()
+    }
+    credited_designer_ids = {
+        collection["designer_id"]
+        for collection in collections_response.json()
+    }
+
+    assert designer_ids <= credited_designer_ids
+
 def test_deleting_designer_cascades_to_collections(client):
     designer_response = client.post(
         "/designers",
