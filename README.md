@@ -26,6 +26,10 @@ source .venv/bin/activate
 python3 -m pip install -r requirements.txt
 python3 scripts/init_db.py
 uvicorn app.main:app --reload
+```
+
+`init_db.py` creates and seeds `data/archive.db` only when the database does
+not already exist. It never overwrites live archive records.
 
 ### Application Structure
 
@@ -34,7 +38,7 @@ sql/schema.sql
 sql/seed.sql
     #seed.sql contains repeatable sample records.
 scripts/init_db.py
-    #scripts/init_db.py recreates the database and executes both SQL files.
+    #init_db.py creates and seeds the database only when it does not exist.
 app/database.py
     #database.py opens and configures connections used during normal API reads and writes.
 app/schemas.py
