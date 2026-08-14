@@ -1,3 +1,51 @@
+## Collection Archive
+
+### What this product does:
+
+A public-facing archive that helps people discover which individual designers created collections for different fashion labels throughout their careers.
+Users can add/edit designer/collection records (think Wiki)
+Visitors can view archived designers to discover who created certain fashion collections, view collections credited to a designer across different labels and seasons.
+
+### Data relationship
+
+One designer may have many collections across many labels/seasons. (OneToMany) Eventually I think I should include a junction table to represent collections credited to multiple designers. (ManyToMany)
+
+### Technology
+
+- SQLite
+- Python
+- FastAPI
+- Vanilla HTML, CSS, and JavaScript
+- Pytest
+
+### Run locally
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements.txt
+python3 scripts/init_db.py
+uvicorn app.main:app --reload
+
+### Application Structure
+
+sql/schema.sql
+    #schema.sql defines the database tables, fields, constraints, foreign key, and index.
+sql/seed.sql
+    #seed.sql contains repeatable sample records.
+scripts/init_db.py
+    #scripts/init_db.py recreates the database and executes both SQL files.
+app/database.py
+    #database.py opens and configures connections used during normal API reads and writes.
+app/schemas.py
+    #schemas.py defines the accepted structure and validation rules for designer and collection data received by the API. The SQL tables remain defined separately in schema.sql.
+app/main.py
+    #main.py defines the middle-tier FastAPI application. Uvicorn receives HTTP requests and passes them to matching FastAPI routes. Those routes validate requests, run SQL through a database connection, and return data or errors to the frontend as HTTP responses.
+web/
+    #The web/ directory contains the user-facing layer. HTML defines the structure and content of each page, CSS controls its visual presentation, and JavaScript loads archive data, handles forms, and communicates with the API.
+tests/
+    #The tests verify API functionality by sending predefined input and comparing the response with expected output. Each test uses a temporary database so the real archive data is not changed.
+
 # OnesToManys (ListDetails)
 
 The point of this project is to explore what a 3-tier web application is like.
