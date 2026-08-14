@@ -1,5 +1,5 @@
 import sqlite3
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, Response, status
 from app.database import connect
 from app.schemas import DesignerCreate
 
@@ -268,5 +268,44 @@ def update_designer(designer_id: int, payload: DesignerCreate):
             detail="Designer violates a database constraint",
         ) from error
 
+    finally:
+        connection.close()
+
+@app.delete(
+    "/designers/{designer_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_designer(designer_id: int):
+    connection = connect()
+
+    try:
+        existing_designer = connection.execute(
+            """
+            SELECT id
+            FROM designers
+            WHERE id = ?
+            """,
+            (designer_id,),
+        ).fetchone()
+
+        if existing_designer is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Designer not found",
+            )
+
+        connection.execute(
+            """
+            DELETE FROM designers
+            WHERE id = ?
+            """,
+            (designer_id,),
+        )
+
+        connection.commit()
+
+        return Response(
+            status_code=status.HTTP_204_NO_CONTENT
+        )
     finally:
         connection.close()
