@@ -34,7 +34,6 @@ def list_designers():
     finally:
         connection.close()
 
-    return designers
 
 @app.get("/designers/{designer_id}")
 def get_designer(designer_id: int):
