@@ -1,15 +1,73 @@
 const parameters = new URLSearchParams(window.location.search);
-const designerId = parameters.get("designer_id");
+let designerId = parameters.get("designer_id");
+const collectionId = parameters.get("collection_id");
+const isEditing = Boolean(collectionId);
 
 const form = document.querySelector("#collection-form");
 const statusMessage = document.querySelector("#status");
 
 
-if (!designerId) {
+if (!designerId && !isEditing) {
     statusMessage.textContent = "No designer was selected.";
     form.hidden = true;
 }
 
+async function loadCollectionForEditing() {
+    if (!isEditing) {
+        return;
+    }
+
+    statusMessage.textContent = "Loading collection...";
+
+    try {
+        const response = await fetch(
+            `/collections/${collectionId}`
+        );
+
+        if (!response.ok) {
+            throw new Error("Collection could not be loaded");
+        }
+
+        const collection = await response.json();
+
+        designerId = collection.designer_id;
+
+        document.querySelector("#form-title").textContent =
+            "Edit Collection";
+
+        document.querySelector("#submit-button").textContent =
+            "Save changes";
+
+        document.querySelector("#label").value =
+            collection.label;
+
+        document.querySelector("#name").value =
+            collection.name || "";
+
+        document.querySelector("#season").value =
+            collection.season;
+
+        document.querySelector("#release-year").value =
+            collection.release_year;
+
+        document.querySelector("#collection-status").value =
+            collection.status;
+
+        document.querySelector("#piece-count").value =
+            collection.piece_count ?? "";
+
+        document.querySelector("#description").value =
+            collection.description || "";
+
+        statusMessage.textContent = "";
+    } catch (error) {
+        statusMessage.textContent = error.message;
+        form.hidden = true;
+    }
+}
+
+
+loadCollectionForEditing();
 
 form.addEventListener("submit", async function (event) {
     event.preventDefault();
@@ -31,8 +89,15 @@ form.addEventListener("submit", async function (event) {
     statusMessage.textContent = "Saving collection...";
 
     try {
-        const response = await fetch("/collections", {
-            method: "POST",
+        const endpoint = isEditing
+            ? `/collections/${collectionId}`
+            : "/collections";
+
+        const method = isEditing
+            ? "PUT"
+            : "POST";
+        const response = await fetch(endpoint, {
+            method: method,
             headers: {
                 "Content-Type": "application/json",
             },

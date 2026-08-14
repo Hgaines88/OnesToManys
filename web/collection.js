@@ -22,6 +22,8 @@ async function loadCollection() {
         }
 
         const collection = await response.json();
+        document.querySelector("#edit-collection").href =
+            `/collection-form.html?collection_id=${collection.id}`;
 
         document.querySelector("#collection-title").textContent =
             collection.name || collection.label;
