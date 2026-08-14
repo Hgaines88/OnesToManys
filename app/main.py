@@ -1,5 +1,7 @@
-from fastapi import FastAPI, HTTPException
+import sqlite3
+from fastapi import FastAPI, HTTPException, status
 from app.database import connect
+from app.schemas import DesignerCreate
 
 
 app = FastAPI(title="Collection Archive")
@@ -140,5 +142,60 @@ def get_collection(collection_id: int):
             )
 
         return dict(row)
+    finally:
+        connection.close()
+
+@app.post("/designers", status_code=status.HTTP_201_CREATED)
+def create_designer(payload: DesignerCreate):
+    connection = connect()
+
+    try:
+        cursor = connection.execute(
+            """
+            INSERT INTO designers (
+                full_name,
+                nationality,
+                birth_year,
+                website,
+                biography
+            )
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                payload.full_name,
+                payload.nationality,
+                payload.birth_year,
+                payload.website,
+                payload.biography,
+            ),
+        )
+
+        connection.commit()
+
+        row = connection.execute(
+            """
+            SELECT *
+            FROM designers
+            WHERE id = ?
+            """,
+            (cursor.lastrowid,),
+        ).fetchone()
+
+        return dict(row)
+
+    except sqlite3.IntegrityError as error:
+        connection.rollback()
+
+        if "UNIQUE constraint failed: designers.full_name" in str(error):
+            raise HTTPException(
+                status_code=409,
+                detail="A designer with this name already exists",
+            ) from error
+
+        raise HTTPException(
+            status_code=400,
+            detail="Designer violates a database constraint",
+        ) from error
+
     finally:
         connection.close()
