@@ -199,3 +199,74 @@ def create_designer(payload: DesignerCreate):
 
     finally:
         connection.close()
+
+@app.put("/designers/{designer_id}")
+def update_designer(designer_id: int, payload: DesignerCreate):
+    connection = connect()
+
+    try:
+        existing_designer = connection.execute(
+            """
+            SELECT id
+            FROM designers
+            WHERE id = ?
+            """,
+            (designer_id,),
+        ).fetchone()
+
+        if existing_designer is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Designer not found",
+            )
+
+        connection.execute(
+            """
+            UPDATE designers
+            SET
+                full_name = ?,
+                nationality = ?,
+                birth_year = ?,
+                website = ?,
+                biography = ?
+            WHERE id = ?
+            """,
+            (
+                payload.full_name,
+                payload.nationality,
+                payload.birth_year,
+                payload.website,
+                payload.biography,
+                designer_id,
+            ),
+        )
+
+        connection.commit()
+
+        updated_designer = connection.execute(
+            """
+            SELECT *
+            FROM designers
+            WHERE id = ?
+            """,
+            (designer_id,),
+        ).fetchone()
+
+        return dict(updated_designer)
+
+    except sqlite3.IntegrityError as error:
+        connection.rollback()
+
+        if "UNIQUE constraint failed: designers.full_name" in str(error):
+            raise HTTPException(
+                status_code=409,
+                detail="A designer with this name already exists",
+            ) from error
+
+        raise HTTPException(
+            status_code=400,
+            detail="Designer violates a database constraint",
+        ) from error
+
+    finally:
+        connection.close()
