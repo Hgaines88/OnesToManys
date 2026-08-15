@@ -43,6 +43,9 @@ CRUD functionality for Designers & Collections by any/all users.
 ## Future features
 
 What are we deliberately postponing?
-Postponing Authentication (login) for authorized edits vs everyday users.
-Direct image uploads and image hosting remain postponed. Collection pages can
+- Postponing Authentication (login) for authorized edits vs everyday users.
+- Direct image uploads and image hosting remain postponed. Collection pages can
 include curated source links and official YouTube embeds.
+- Support for multiple credited designers on one collection through a
+`collection_designers` junction table. This would extend the Version 1
+designer-to-collections model for collaborations and co-designer credits.
