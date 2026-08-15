@@ -121,10 +121,24 @@ def test_migration_upgrades_legacy_data_and_preserves_user_records(
                 """
             ).fetchall()
         }
+        curated_videos = {
+            row["media_value"]
+            for row in connection.execute(
+                """
+                SELECT media_value
+                FROM collection_media
+                WHERE media_type = 'youtube'
+                """
+            ).fetchall()
+        }
     finally:
         connection.close()
 
-    assert first_run == ["001_sync_archive_records.sql"]
+    assert first_run == [
+        "001_sync_archive_records.sql",
+        "002_create_collection_media.sql",
+        "003_add_curated_runway_videos.sql",
+    ]
     assert second_run == []
     assert migration_count == 1
     assert "Hussein Chalayan" not in names
@@ -150,6 +164,10 @@ def test_migration_upgrades_legacy_data_and_preserves_user_records(
         ("Telfar Clemens", "Telfar"),
         ("Rick Owens", "Rick Owens"),
     } <= archive_pairs
+    assert {
+        "akJxFSRW03U",
+        "oYtZVDZWCes",
+    } <= curated_videos
 
 
 def test_failed_migration_rolls_back_and_is_not_recorded(

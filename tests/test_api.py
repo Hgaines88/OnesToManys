@@ -120,6 +120,78 @@ def test_every_seeded_designer_has_a_collection(client):
     assert designer_ids <= credited_designer_ids
 
 
+def test_collection_media_is_normalized_and_updated(client):
+    create_response = client.post(
+        "/collections",
+        json={
+            "designer_id": 1,
+            "label": "Media Test Label",
+            "name": None,
+            "season": "Resort",
+            "release_year": 2027,
+            "status": "concept",
+            "piece_count": None,
+            "description": None,
+            "source_url": "https://example.com/runway-review",
+            "youtube_video_id": (
+                "https://www.youtube.com/watch?v=M7lc1UVf-VE"
+            ),
+        },
+    )
+
+    assert create_response.status_code == 201
+    collection_id = create_response.json()["id"]
+
+    detail_response = client.get(f"/collections/{collection_id}")
+
+    assert detail_response.status_code == 200
+    assert detail_response.json()["source_url"] == (
+        "https://example.com/runway-review"
+    )
+    assert detail_response.json()["youtube_video_id"] == "M7lc1UVf-VE"
+
+    update_response = client.put(
+        f"/collections/{collection_id}",
+        json={
+            "designer_id": 1,
+            "label": "Media Test Label",
+            "name": None,
+            "season": "Resort",
+            "release_year": 2027,
+            "status": "released",
+            "piece_count": None,
+            "description": None,
+            "source_url": None,
+            "youtube_video_id": "https://youtu.be/dQw4w9WgXcQ",
+        },
+    )
+
+    assert update_response.status_code == 200
+
+    updated_detail = client.get(f"/collections/{collection_id}").json()
+
+    assert updated_detail["source_url"] is None
+    assert updated_detail["youtube_video_id"] == "dQw4w9WgXcQ"
+
+    delete_response = client.delete(f"/collections/{collection_id}")
+    assert delete_response.status_code == 204
+
+    connection = database.connect()
+    try:
+        remaining_media = connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM collection_media
+            WHERE collection_id = ?
+            """,
+            (collection_id,),
+        ).fetchone()[0]
+    finally:
+        connection.close()
+
+    assert remaining_media == 0
+
+
 def test_deleting_designer_cascades_to_collections(client):
     designer_response = client.post(
         "/designers",

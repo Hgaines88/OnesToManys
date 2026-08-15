@@ -16,6 +16,7 @@ One designer may have many collections across many labels/seasons. (OneToMany) E
 - Python
 - FastAPI
 - Vanilla HTML, CSS, and JavaScript
+- React and Vite
 - Pytest
 
 ### Run locally
@@ -55,19 +56,19 @@ web/
     #The web/ directory contains the user-facing layer. HTML defines the structure and content of each page, CSS controls its visual presentation, and JavaScript loads archive data, handles forms, and communicates with the API.
 tests/
     #The tests verify API functionality by sending predefined input and comparing the response with expected output. Each test uses a temporary database so the real archive data is not changed.
-react-ui/app.jsx
+react-ui/src/App.jsx
     #App.jsx is the React routing map. It connects browser URLs to page components, places those pages inside a shared layout, and includes routes for listing, viewing, creating, editing, and handling unknown pages.
-react-ui/designerlist.jsx
+react-ui/src/pages/DesignerList.jsx
     #DesignerList.jsx requests designers from FastAPI when it first loads, stores the result in React state, and maps each designer record into a linked card on the home page.
-react-ui/designerdetail.jsx
+react-ui/src/pages/DesignerDetail.jsx
     #DesignerDetail reads a designer ID from the React route. When the component loads, it requests both the designer record and that designer’s collections from FastAPI. It stores both responses in React state and renders the one-to-many relationship. It also links to the create and edit forms. When a deletion is confirmed, it sends a DELETE request and SQLite performs the cascading collection deletion.
-react-ui/designerform.jsx
+react-ui/src/pages/DesignerForm.jsx
     #DesignerForm handles both creating and editing designers. It detects edit mode from the route parameter. Its inputs are controlled by one state object, and a shared change handler updates the relevant property. On submission, it converts form strings into the types expected by FastAPI, changes blank optional fields to null, normalizes the website address, and sends either POST or PUT. After a successful response, it navigates to the saved designer’s profile.
-react-ui/collectiondetail.jsx
+react-ui/src/pages/CollectionDetail.jsx
     #CollectionDetail gets the collection ID from the React route and requests that record from FastAPI. The API response includes the collection’s foreign key and the designer name obtained through a SQL join. The component displays optional fields with appropriate fallbacks and links back to the parent designer. It can also navigate to the edit form or delete the collection and return to its designer’s profile.
-react-ui/collectionform.jsx
+react-ui/src/pages/CollectionForm.jsx
     #CollectionForm handles both collection creation and editing. When creating, it obtains the parent designer ID from the nested URL. When editing, it obtains the designer ID from the existing collection. Its controlled fields are stored in React state, and submission converts the string input values into the integer and null values expected by FastAPI. The payload includes designer_id, which connects the collection to its parent. FastAPI validates the parent, while SQLite enforces the foreign key and uniqueness rules.
-react-us/api.js
+react-ui/src/api.js
     #Api.js centralizes communication between React and FastAPI. It prefixes API requests so Vite can proxy them to the backend, adds the JSON content header when a request has a body, parses successful JSON responses, handles empty deletion responses, and converts unsuccessful HTTP responses into JavaScript errors that page components can display.
 
 # OnesToManys (ListDetails)

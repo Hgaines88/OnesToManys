@@ -22,6 +22,13 @@ async function loadCollection() {
         }
 
         const collection = await response.json();
+        document.querySelector("#label-monogram").textContent =
+            collection.label
+                .split(/\s+/)
+                .slice(0, 2)
+                .map((word) => word[0])
+                .join("")
+                .toUpperCase();
         document.querySelector("#edit-collection").href =
             `/collection-form.html?collection_id=${collection.id}`;
 
@@ -57,6 +64,38 @@ async function loadCollection() {
         ).textContent =
             collection.description ||
             "No description is available.";
+
+        const mediaSection =
+            document.querySelector("#collection-media");
+
+        if (collection.youtube_video_id) {
+            const videoContainer =
+                document.querySelector("#collection-video");
+            const iframe = document.createElement("iframe");
+
+            iframe.src =
+                `https://www.youtube.com/embed/${collection.youtube_video_id}`;
+            iframe.title =
+                `${collection.label} runway video`;
+            iframe.allow =
+                "accelerometer; autoplay; clipboard-write; " +
+                "encrypted-media; gyroscope; picture-in-picture; web-share";
+            iframe.allowFullscreen = true;
+            videoContainer.append(iframe);
+            videoContainer.hidden = false;
+            mediaSection.hidden = false;
+        }
+
+        if (collection.source_url) {
+            const sourceLink = document.createElement("a");
+
+            sourceLink.href = collection.source_url;
+            sourceLink.textContent = "View the curated collection source ↗";
+            sourceLink.target = "_blank";
+            sourceLink.rel = "noopener noreferrer";
+            document.querySelector("#collection-source").append(sourceLink);
+            mediaSection.hidden = false;
+        }
 
         statusMessage.textContent = "";
         collectionArticle.hidden = false;

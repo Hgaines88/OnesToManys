@@ -1,3 +1,18 @@
+function nationalityFlags(nationality) {
+    return {
+        American: "🇺🇸",
+        British: "🇬🇧",
+        "British-Jamaican": "🇬🇧 🇯🇲",
+        Canadian: "🇨🇦",
+        Georgian: "🇬🇪",
+        Italian: "🇮🇹",
+        Japanese: "🇯🇵",
+        "Liberian-American": "🇱🇷 🇺🇸",
+        "Northern Irish": "🇬🇧",
+    }[nationality] || "";
+}
+
+
 async function loadDesigner() {
     const parameters = new URLSearchParams(window.location.search);
     const designerId = parameters.get("id");
@@ -32,8 +47,11 @@ async function loadDesigner() {
         document.querySelector("#edit-designer").href =
             `/designer-form.html?id=${designer.id}`;
 
+        const flags = nationalityFlags(designer.nationality);
         document.querySelector("#designer-name").textContent =
-            designer.full_name;
+            flags
+                ? `${flags} ${designer.full_name}`
+                : designer.full_name;
 
         const details = [
             designer.nationality,

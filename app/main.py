@@ -15,6 +15,37 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(title="Collection Archive", lifespan=lifespan)
 
 
+def sync_collection_media(
+    connection: sqlite3.Connection,
+    collection_id: int,
+    payload: CollectionCreate,
+) -> None:
+    connection.execute(
+        "DELETE FROM collection_media WHERE collection_id = ?",
+        (collection_id,),
+    )
+
+    media = [
+        ("source", payload.source_url),
+        ("youtube", payload.youtube_video_id),
+    ]
+    connection.executemany(
+        """
+        INSERT INTO collection_media (
+            collection_id,
+            media_type,
+            media_value
+        )
+        VALUES (?, ?, ?)
+        """,
+        [
+            (collection_id, media_type, media_value)
+            for media_type, media_value in media
+            if media_value is not None
+        ],
+    )
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
@@ -104,7 +135,19 @@ def list_designer_collections(designer_id: int):
                 release_year,
                 status,
                 piece_count,
-                description
+                description,
+                (
+                    SELECT media_value
+                    FROM collection_media
+                    WHERE collection_id = collections.id
+                      AND media_type = 'source'
+                ) AS source_url,
+                (
+                    SELECT media_value
+                    FROM collection_media
+                    WHERE collection_id = collections.id
+                      AND media_type = 'youtube'
+                ) AS youtube_video_id
             FROM collections
             WHERE designer_id = ?
             ORDER BY release_year DESC, season
@@ -133,7 +176,19 @@ def get_collection(collection_id: int):
                 collections.release_year,
                 collections.status,
                 collections.piece_count,
-                collections.description
+                collections.description,
+                (
+                    SELECT media_value
+                    FROM collection_media
+                    WHERE collection_id = collections.id
+                      AND media_type = 'source'
+                ) AS source_url,
+                (
+                    SELECT media_value
+                    FROM collection_media
+                    WHERE collection_id = collections.id
+                      AND media_type = 'youtube'
+                ) AS youtube_video_id
             FROM collections
             JOIN designers
                 ON designers.id = collections.designer_id
@@ -366,6 +421,12 @@ def create_collection(payload: CollectionCreate):
             ),
         )
 
+        sync_collection_media(
+            connection,
+            cursor.lastrowid,
+            payload,
+        )
+
         connection.commit()
 
         row = connection.execute(
@@ -377,7 +438,10 @@ def create_collection(payload: CollectionCreate):
             (cursor.lastrowid,),
         ).fetchone()
 
-        return dict(row)
+        result = dict(row)
+        result["source_url"] = payload.source_url
+        result["youtube_video_id"] = payload.youtube_video_id
+        return result
 
     except sqlite3.IntegrityError as error:
         connection.rollback()
@@ -461,6 +525,12 @@ def update_collection(
             ),
         )
 
+        sync_collection_media(
+            connection,
+            collection_id,
+            payload,
+        )
+
         connection.commit()
 
         updated_collection = connection.execute(
@@ -472,7 +542,10 @@ def update_collection(
             (collection_id,),
         ).fetchone()
 
-        return dict(updated_collection)
+        result = dict(updated_collection)
+        result["source_url"] = payload.source_url
+        result["youtube_video_id"] = payload.youtube_video_id
+        return result
 
     except sqlite3.IntegrityError as error:
         connection.rollback()
@@ -548,7 +621,19 @@ def list_collections():
                 collections.release_year,
                 collections.status,
                 collections.piece_count,
-                collections.description
+                collections.description,
+                (
+                    SELECT media_value
+                    FROM collection_media
+                    WHERE collection_id = collections.id
+                      AND media_type = 'source'
+                ) AS source_url,
+                (
+                    SELECT media_value
+                    FROM collection_media
+                    WHERE collection_id = collections.id
+                      AND media_type = 'youtube'
+                ) AS youtube_video_id
             FROM collections
             JOIN designers
                 ON designers.id = collections.designer_id

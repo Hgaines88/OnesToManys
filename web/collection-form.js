@@ -59,6 +59,12 @@ async function loadCollectionForEditing() {
         document.querySelector("#description").value =
             collection.description || "";
 
+        document.querySelector("#source-url").value =
+            collection.source_url || "";
+
+        document.querySelector("#youtube-video").value =
+            collection.youtube_video_id || "";
+
         statusMessage.textContent = "";
     } catch (error) {
         statusMessage.textContent = error.message;
@@ -84,6 +90,9 @@ form.addEventListener("submit", async function (event) {
         status: formData.get("status"),
         piece_count: pieceCount ? Number(pieceCount) : null,
         description: formData.get("description") || null,
+        source_url: formData.get("source_url") || null,
+        youtube_video_id:
+            formData.get("youtube_video_id") || null,
     };
 
     statusMessage.textContent = "Saving collection...";

@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field, field_validator
 from typing import Literal
+from urllib.parse import parse_qs, urlparse
+import re
 
 CollectionStatus = Literal[
     "concept",
@@ -34,6 +36,8 @@ class CollectionCreate(BaseModel):
     status: CollectionStatus
     piece_count: int | None = Field(default=None, ge=0)
     description: str | None = None
+    source_url: str | None = Field(default=None, max_length=500)
+    youtube_video_id: str | None = Field(default=None, max_length=200)
 
     @field_validator("label", "season")
     @classmethod
@@ -62,3 +66,66 @@ class CollectionCreate(BaseModel):
             )
 
         return cleaned_value
+
+    @field_validator("source_url")
+    @classmethod
+    def source_url_must_be_http(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        if value is None:
+            return None
+
+        cleaned_value = value.strip()
+        if not cleaned_value:
+            return None
+
+        parsed = urlparse(cleaned_value)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise ValueError("Source URL must begin with http:// or https://")
+
+        return cleaned_value
+
+    @field_validator("youtube_video_id")
+    @classmethod
+    def normalize_youtube_video_id(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        if value is None:
+            return None
+
+        cleaned_value = value.strip()
+        if not cleaned_value:
+            return None
+
+        video_id = cleaned_value
+        if "://" in cleaned_value:
+            parsed = urlparse(cleaned_value)
+            hostname = (parsed.hostname or "").lower()
+
+            if hostname in {"youtu.be", "www.youtu.be"}:
+                video_id = parsed.path.strip("/").split("/")[0]
+            elif hostname in {
+                "youtube.com",
+                "www.youtube.com",
+                "m.youtube.com",
+                "music.youtube.com",
+                "youtube-nocookie.com",
+                "www.youtube-nocookie.com",
+            }:
+                if parsed.path == "/watch":
+                    video_id = parse_qs(parsed.query).get("v", [""])[0]
+                else:
+                    path_parts = parsed.path.strip("/").split("/")
+                    video_id = path_parts[1] if (
+                        len(path_parts) >= 2
+                        and path_parts[0] in {"embed", "shorts", "live"}
+                    ) else ""
+            else:
+                video_id = ""
+
+        if not re.fullmatch(r"[A-Za-z0-9_-]{11}", video_id):
+            raise ValueError("Enter an official YouTube URL or 11-character video ID")
+
+        return video_id

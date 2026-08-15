@@ -9,7 +9,7 @@ A public-facing archive that helps people discover which individual designers cr
 - As a visitor, I can view all archived designers so I can discover who created fashion collections.
 - As a visitor, I can view the collections credited to a designer across different labels and seasons.
 - As a visitor, I can open a collection to see its label, season, year, status, piece count, and description.
-- As a visitor, I can open a collection to see its label, season, year, status, piece $
+- As a visitor, I can follow a curated source or watch an official embedded runway video when available.
 - As a user, I can add, edit, and delete designer records.
 - As a user, I can add, edit, and delete collection records.
 
@@ -33,6 +33,8 @@ Release Year
 Status (archived, released, concept, in-production, etc)
 Piece Count
 Description
+Curated source link
+Official YouTube runway video
 
 ## Version 1 features
 
@@ -42,4 +44,5 @@ CRUD functionality for Designers & Collections by any/all users.
 
 What are we deliberately postponing?
 Postponing Authentication (login) for authorized edits vs everyday users.
-Also collection pages should include images (a 2nd one-to-many relationship)
+Direct image uploads and image hosting remain postponed. Collection pages can
+include curated source links and official YouTube embeds.

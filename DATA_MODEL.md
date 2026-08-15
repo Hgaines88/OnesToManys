@@ -31,8 +31,22 @@ Represents a collection credited to one lead designer.
 
 A collection name is optional because many fashion collections are unnamed or eponymous and are instead identified by label, season, and year.
 
+## Collection media
+
+Represents a curated external resource associated with one collection. The
+archive stores links and YouTube video IDs, not copyrighted media files.
+
+| Field | Meaning | Required? |
+|---|---|---|
+| id | Internal unique identifier | Yes |
+| collection_id | Identifies the collection | Yes |
+| media_type | Curated source or YouTube video | Yes |
+| media_value | Source URL or normalized YouTube video ID | Yes |
+
 ## Relationship rules
 
 - One designer may have zero or many collections.
 - Every collection must reference one existing designer.
 - Deleting a designer deletes their collection records.
+- One collection may have a source link and a YouTube video.
+- Deleting a collection deletes its media records.

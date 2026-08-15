@@ -48,3 +48,32 @@ li {
 #collection-description {
     max-width: 65ch;
 }
+
+.collection-heading {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+}
+
+.label-monogram {
+    align-items: center;
+    background: #1f1b18;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    flex: 0 0 4rem;
+    font-weight: bold;
+    height: 4rem;
+    justify-content: center;
+}
+
+.video-frame {
+    aspect-ratio: 16 / 9;
+    max-width: 900px;
+}
+
+.video-frame iframe {
+    border: 0;
+    height: 100%;
+    width: 100%;
+}

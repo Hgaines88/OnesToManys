@@ -1,3 +1,18 @@
+function nationalityFlags(nationality) {
+    return {
+        American: "🇺🇸",
+        British: "🇬🇧",
+        "British-Jamaican": "🇬🇧 🇯🇲",
+        Canadian: "🇨🇦",
+        Georgian: "🇬🇪",
+        Italian: "🇮🇹",
+        Japanese: "🇯🇵",
+        "Liberian-American": "🇱🇷 🇺🇸",
+        "Northern Irish": "🇬🇧",
+    }[nationality] || "";
+}
+
+
 async function loadDesigners() {
     const status = document.querySelector("#status");
     const designerList = document.querySelector("#designer-list");
@@ -24,6 +39,11 @@ async function loadDesigners() {
             heading.append(link);
 
             const detailParts = [];
+
+            const flags = nationalityFlags(designer.nationality);
+            if (flags) {
+                detailParts.push(flags);
+            }
 
             if (designer.nationality) {
                 detailParts.push(designer.nationality);
