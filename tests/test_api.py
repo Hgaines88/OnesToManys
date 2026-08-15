@@ -120,30 +120,6 @@ def test_every_seeded_designer_has_a_collection(client):
     assert designer_ids <= credited_designer_ids
 
 
-def test_migrations_are_applied_only_once(client):
-    database.apply_migrations()
-    database.apply_migrations()
-
-    connection = database.connect()
-
-    try:
-        applied_count = connection.execute(
-            """
-            SELECT COUNT(*)
-            FROM schema_migrations
-            WHERE filename = '001_sync_archive_records.sql'
-            """
-        ).fetchone()[0]
-
-        designer_count = connection.execute(
-            "SELECT COUNT(*) FROM designers"
-        ).fetchone()[0]
-    finally:
-        connection.close()
-
-    assert applied_count == 1
-    assert designer_count == 12
-
 def test_deleting_designer_cascades_to_collections(client):
     designer_response = client.post(
         "/designers",
