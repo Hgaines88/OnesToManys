@@ -31,24 +31,44 @@ uvicorn app.main:app --reload
 `init_db.py` creates and seeds `data/archive.db` only when the database does
 not already exist. It never overwrites live archive records.
 
+After initialization, designers and collections added through either web UI
+are stored in that same live database and appear in both interfaces. SQL files
+under `sql/migrations/` contain deliberate database upgrades. FastAPI applies
+each migration once at startup and records it in `schema_migrations`; migrations
+never recreate the database from seed data.
+
 ### Application Structure
 
 sql/schema.sql
-    #schema.sql defines the database tables, fields, constraints, foreign key, and index.
+    #Schema.sql defines the database tables, fields, constraints, foreign key, and index.
 sql/seed.sql
-    #seed.sql contains repeatable sample records.
+    #Seed.sql supplies starting data only when a database is first created. Existing databases may contain user additions, so rebuilding them from the seed would cause data loss. The migration system safely upgrades existing databases. FastAPI checks a migration-history table during startup, applies each pending numbered SQL file in a transaction, and records it so it cannot run twice. Normal user additions still go through the API and are immediately visible in both frontends.
 scripts/init_db.py
-    #init_db.py creates and seeds the database only when it does not exist.
+    #Init_db.py creates and seeds the database only when it does not exist.
 app/database.py
-    #database.py opens and configures connections used during normal API reads and writes.
+    #Database.py opens and configures connections used during normal API reads and writes.
 app/schemas.py
-    #schemas.py defines the accepted structure and validation rules for designer and collection data received by the API. The SQL tables remain defined separately in schema.sql.
+    #Schemas.py defines the accepted structure and validation rules for designer and collection data received by the API. The SQL tables remain defined separately in schema.sql.
 app/main.py
-    #main.py defines the middle-tier FastAPI application. Uvicorn receives HTTP requests and passes them to matching FastAPI routes. Those routes validate requests, run SQL through a database connection, and return data or errors to the frontend as HTTP responses.
+    #Main.py defines the middle-tier FastAPI application. Uvicorn receives HTTP requests and passes them to matching FastAPI routes. Those routes validate requests, run SQL through a database connection, and return data or errors to the frontend as HTTP responses.
 web/
     #The web/ directory contains the user-facing layer. HTML defines the structure and content of each page, CSS controls its visual presentation, and JavaScript loads archive data, handles forms, and communicates with the API.
 tests/
     #The tests verify API functionality by sending predefined input and comparing the response with expected output. Each test uses a temporary database so the real archive data is not changed.
+react-ui/app.jsx
+    #App.jsx is the React routing map. It connects browser URLs to page components, places those pages inside a shared layout, and includes routes for listing, viewing, creating, editing, and handling unknown pages.
+react-ui/designerlist.jsx
+    #DesignerList.jsx requests designers from FastAPI when it first loads, stores the result in React state, and maps each designer record into a linked card on the home page.
+react-ui/designerdetail.jsx
+    #DesignerDetail reads a designer ID from the React route. When the component loads, it requests both the designer record and that designer’s collections from FastAPI. It stores both responses in React state and renders the one-to-many relationship. It also links to the create and edit forms. When a deletion is confirmed, it sends a DELETE request and SQLite performs the cascading collection deletion.
+react-ui/designerform.jsx
+    #DesignerForm handles both creating and editing designers. It detects edit mode from the route parameter. Its inputs are controlled by one state object, and a shared change handler updates the relevant property. On submission, it converts form strings into the types expected by FastAPI, changes blank optional fields to null, normalizes the website address, and sends either POST or PUT. After a successful response, it navigates to the saved designer’s profile.
+react-ui/collectiondetail.jsx
+    #CollectionDetail gets the collection ID from the React route and requests that record from FastAPI. The API response includes the collection’s foreign key and the designer name obtained through a SQL join. The component displays optional fields with appropriate fallbacks and links back to the parent designer. It can also navigate to the edit form or delete the collection and return to its designer’s profile.
+react-ui/collectionform.jsx
+    #CollectionForm handles both collection creation and editing. When creating, it obtains the parent designer ID from the nested URL. When editing, it obtains the designer ID from the existing collection. Its controlled fields are stored in React state, and submission converts the string input values into the integer and null values expected by FastAPI. The payload includes designer_id, which connects the collection to its parent. FastAPI validates the parent, while SQLite enforces the foreign key and uniqueness rules.
+react-us/api.js
+    #Api.js centralizes communication between React and FastAPI. It prefixes API requests so Vite can proxy them to the backend, adds the JSON content header when a request has a body, parses successful JSON responses, handles empty deletion responses, and converts unsuccessful HTTP responses into JavaScript errors that page components can display.
 
 # OnesToManys (ListDetails)
 

@@ -216,21 +216,7 @@ VALUES (
             'archived',
             NULL,
             'A denim-focused capsule created for the Diesel Red Tag Project.'
-        );
-
-
-INSERT INTO collections (
-    id,
-    designer_id,
-    label,
-    name,
-    season,
-    release_year,
-    status,
-    piece_count,
-    description
-)
-VALUES
+        ),
     (
         10,
         6,

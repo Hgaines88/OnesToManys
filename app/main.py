@@ -1,11 +1,18 @@
 import sqlite3
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Response, status
-from app.database import connect
+from app.database import apply_migrations, connect
 from app.schemas import CollectionCreate, DesignerCreate
 from fastapi.staticfiles import StaticFiles
 
 
-app = FastAPI(title="Collection Archive")
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    apply_migrations()
+    yield
+
+
+app = FastAPI(title="Collection Archive", lifespan=lifespan)
 
 
 @app.get("/health")
