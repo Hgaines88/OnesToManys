@@ -36,7 +36,7 @@ JOIN (
         'Miuccia Prada', 'Prada',
         'Spring/Summer', 2012, 'JgaGXv1XnrA'
     UNION ALL SELECT
-        'Demna Gvasalia', 'Balenciaga',
+        'Demna', 'Balenciaga',
         'Spring/Summer', 2023, 'Yh_1K9s6UV0'
     UNION ALL SELECT
         'Virgil Abloh', 'Louis Vuitton',
