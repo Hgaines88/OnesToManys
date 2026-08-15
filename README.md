@@ -1,10 +1,11 @@
 ## Collection Archive
 
+A public-facing archive that helps people discover which individual designers created collections for different fashion labels throughout their careers.
+
 ### What this product does:
 
-A public-facing archive that helps people discover which individual designers created collections for different fashion labels throughout their careers.
 Users can add/edit designer/collection records (think Wiki)
-Visitors can view archived designers to discover who created certain fashion collections, view collections credited to a designer across different labels and seasons.
+Visitors can view archived collections to discover the designers who created certain fashion collections across different labels and seasons.
 
 ### Data relationship
 
