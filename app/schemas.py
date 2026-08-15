@@ -14,7 +14,7 @@ class DesignerCreate(BaseModel):
     full_name: str = Field(min_length=1, max_length=120)
     nationality: str | None = None
     birth_year: int | None = Field(default=None, ge=1800, le=2100)
-    website: str | None = None
+    website: str | None = Field(default=None, max_length=500)
     biography: str | None = None
 
     @field_validator("full_name")
@@ -24,6 +24,29 @@ class DesignerCreate(BaseModel):
 
         if not cleaned_value:
             raise ValueError("Full name must not be blank")
+
+        return cleaned_value
+
+    @field_validator("website")
+    @classmethod
+    def normalize_website_url(
+        cls,
+        value: str | None,
+    ) -> str | None:
+        if value is None:
+            return None
+
+        cleaned_value = value.strip()
+        if not cleaned_value:
+            return None
+
+        parsed = urlparse(cleaned_value)
+        if not parsed.scheme:
+            cleaned_value = f"https://{cleaned_value}"
+            parsed = urlparse(cleaned_value)
+
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise ValueError("Website URL must use http:// or https://")
 
         return cleaned_value
 

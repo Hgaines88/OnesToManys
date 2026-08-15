@@ -138,6 +138,7 @@ def test_migration_upgrades_legacy_data_and_preserves_user_records(
         "001_sync_archive_records.sql",
         "002_create_collection_media.sql",
         "003_add_curated_runway_videos.sql",
+        "004_add_demna_runway_video.sql",
     ]
     assert second_run == []
     assert migration_count == 1
@@ -167,6 +168,7 @@ def test_migration_upgrades_legacy_data_and_preserves_user_records(
     assert {
         "akJxFSRW03U",
         "oYtZVDZWCes",
+        "Yh_1K9s6UV0",
     } <= curated_videos
 
 

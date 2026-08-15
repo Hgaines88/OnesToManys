@@ -16,7 +16,7 @@ A public-facing archive that helps people discover which individual designers cr
 ## Home page
 
 For a small archive, the home page can initially show every designer.
-Larger archive should show only recent or featured designers with a seperate
+Larger archive should show only recent or featured designers with a separate
 "View All" page.
 
 ## Designer page
@@ -25,7 +25,7 @@ Full Name, Country/Nationality, Birth Year, Website. Background/Bio
 
 ## Collection page
 
-Each collection page should show basic details abt each collection:
+Each collection page should show basic details about each collection:
 Lead Designer
 Label/Fashion House
 Season

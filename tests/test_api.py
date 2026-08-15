@@ -83,6 +83,43 @@ def test_missing_designer_returns_404(client):
     }
 
 
+def test_designer_website_is_normalized(client):
+    response = client.post(
+        "/designers",
+        json={
+            "full_name": "Website Test Designer",
+            "nationality": None,
+            "birth_year": None,
+            "website": "www.example.com",
+            "biography": None,
+        },
+    )
+
+    assert response.status_code == 201
+    assert response.json()["website"] == "https://www.example.com"
+
+
+def test_blank_and_unsafe_designer_websites(client):
+    blank_response = client.post(
+        "/designers",
+        json={
+            "full_name": "Blank Website Designer",
+            "website": "   ",
+        },
+    )
+    unsafe_response = client.post(
+        "/designers",
+        json={
+            "full_name": "Unsafe Website Designer",
+            "website": "javascript:alert(1)",
+        },
+    )
+
+    assert blank_response.status_code == 201
+    assert blank_response.json()["website"] is None
+    assert unsafe_response.status_code == 422
+
+
 def test_list_collections_for_designer(client):
     response = client.get("/designers/1/collections")
 

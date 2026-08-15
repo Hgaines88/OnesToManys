@@ -30,6 +30,13 @@ python3 scripts/init_db.py
 uvicorn app.main:app --reload
 ```
 
+To print the designers currently stored in the archive from the project root,
+run the utility script as a Python module:
+
+```bash
+python3 -m app.list_designers
+```
+
 `init_db.py` creates and seeds `data/archive.db` only when the database does
 not already exist. It never overwrites live archive records.
 
