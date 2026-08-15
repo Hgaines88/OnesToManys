@@ -47,7 +47,7 @@ def test_list_designers(client):
 
     designers = response.json()
 
-    assert len(designers) == 11
+    assert len(designers) == 12
     designer_names = {
         designer["full_name"]
         for designer in designers
@@ -60,6 +60,7 @@ def test_list_designers(client):
         "Lee Alexander McQueen",
         "Miuccia Prada",
         "Rei Kawakubo",
+        "Rick Owens",
         "Sarah Burton",
         "Shayne Oliver",
         "Telfar Clemens",

@@ -96,6 +96,14 @@ VALUES
         1985,
         'https://telfar.net',
         'Founder of Telfar, a New York label known for accessible, unisex fashion and its community-focused approach.'
+    ),
+    (
+        12,
+        'Rick Owens',
+        'American',
+        1962,
+        'https://www.rickowens.eu',
+        'California-born designer who founded his independent namesake label in 1994 and later established it in Paris.'
     );
 
 
@@ -299,4 +307,15 @@ VALUES
         'archived',
         NULL,
         'A Paris presentation pairing the collection with the collaborative film The World Isn''t Everything.'
+    ),
+    (
+        17,
+        12,
+        'Rick Owens',
+        'Vicious',
+        'Spring/Summer',
+        2014,
+        'archived',
+        40,
+        'A presentation performed by four step teams that challenged conventional runway casting and beauty standards.'
     );
