@@ -1,4 +1,4 @@
-## Collection Archive
+## Collection Archive v0.2.0
 
 A public-facing archive that helps people discover which individual designers created collections for different fashion labels throughout their careers.
 

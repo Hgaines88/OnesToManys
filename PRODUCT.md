@@ -1,17 +1,17 @@
-# Collection Archive 
+# Collection Archive v0.2.0
 
 ## Purpose
 
 A public-facing archive that helps people discover which individual designers created collections for different fashion labels throughout their careers.
 
-## Version 1 user stories
+## Version 0.2.0 user stories
 
-- As a visitor, I can view all archived designers so I can discover who created fashion collections.
-- As a visitor, I can view the collections credited to a designer across different labels and seasons.
-- As a visitor, I can open a collection to see its label, season, year, status, piece count, and description.
-- As a visitor, I can follow a curated source or watch an official embedded runway video when available.
-- As a user, I can add, edit, and delete designer records.
-- As a user, I can add, edit, and delete collection records.
+- As a user, I can view all archived designers so I can discover who created fashion collections.
+- As a user, I can view the collections credited to a designer across different labels and seasons.
+- As a user, I can open a collection to see its label, season, year, status, piece count, and description.
+- As a user, I can follow a curated source or watch an official embedded runway video when available.
+- As a user, I can add, edit, and delete designer (& collection) records.
+- Before public deployment both user authentication and an audit system must be encoded ensuring only verified users can make archival edits (v1.0.0).  
 
 ## Home page
 
@@ -42,10 +42,11 @@ CRUD functionality for Designers & Collections by any/all users.
 
 ## Future features
 
-What are we deliberately postponing?
-- Postponing Authentication (login) for authorized edits vs everyday users.
-- Direct image uploads and image hosting remain postponed. Collection pages can
-include curated source links and official YouTube embeds.
+What are we deliberately postponing for Version 1.0.0?
+- Postponing Authentication (login) for authorized edits vs everyday users. Every edit: record the author, timestamp, previous value, and reason for the change
+- Direct image uploads and image hosting remain postponed. Collection pages can include curated source links and official YouTube embeds.
 - Support for multiple credited designers on one collection through a
 `collection_designers` junction table. This would extend the Version 1
 designer-to-collections model for collaborations and co-designer credits.
+- Authentication, Role-based permissions, edit history, rollback, and a small moderation queue.
+
