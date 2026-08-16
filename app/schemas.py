@@ -10,6 +10,12 @@ CollectionStatus = Literal[
     "archived",
 ]
 
+HOSTNAME_PATTERN = re.compile(
+    r"^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?"
+    r"(\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)*"
+    r"\.[A-Za-z]{2,}$"
+)
+
 class DesignerCreate(BaseModel):
     full_name: str = Field(min_length=1, max_length=120)
     nationality: str | None = None
@@ -47,6 +53,9 @@ class DesignerCreate(BaseModel):
 
         if parsed.scheme not in {"http", "https"} or not parsed.netloc:
             raise ValueError("Website URL must use http:// or https://")
+
+        if not HOSTNAME_PATTERN.match(parsed.hostname or ""):
+            raise ValueError("Website URL must include a valid domain name")
 
         return cleaned_value
 

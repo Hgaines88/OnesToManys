@@ -53,7 +53,7 @@ export default function DesignerDetail() {
         {collections.length === 0 ? <p>No collections have been added.</p> : (
           <ul className="collection-list">
             {collections.map((collection, index) => (
-              <li key={collection.id}><Link to={`/collections/${collection.id}`}><i>{String(index + 1).padStart(2, "0")}</i><strong>{collection.name || collection.label}</strong><span>{collection.label} · {collection.season} {collection.release_year}</span></Link></li>
+              <li key={collection.id}><Link to={`/collections/${collection.id}`}><i>{String(index + 1).padStart(2, "0")}</i><strong>{collection.name || collection.label}</strong><span>{collection.name ? `${collection.label} · ${collection.season} ${collection.release_year}` : `${collection.season} ${collection.release_year}`}</span></Link></li>
             ))}
           </ul>
         )}

@@ -1,23 +1,3 @@
-function nationalityFlags(nationality) {
-    return {
-        American: "🇺🇸",
-        Belgian: "🇧🇪",
-        British: "🇬🇧",
-        "British-Jamaican": "🇬🇧 🇯🇲",
-        Canadian: "🇨🇦",
-        "Dominican-American": "🇩🇴 🇺🇸",
-        French: "🇫🇷",
-        "French-Belgian": "🇫🇷 🇧🇪",
-        Georgian: "🇬🇪",
-        German: "🇩🇪",
-        Italian: "🇮🇹",
-        Japanese: "🇯🇵",
-        "Liberian-American": "🇱🇷 🇺🇸",
-        "Northern Irish": "🇬🇧",
-    }[nationality] || "";
-}
-
-
 async function loadDesigners() {
     const status = document.querySelector("#status");
     const designerList = document.querySelector("#designer-list");
@@ -56,6 +36,10 @@ async function loadDesigners() {
 
             if (designer.birth_year) {
                 detailParts.push(`Born ${designer.birth_year}`);
+            }
+
+            if (designer.collection_count !== undefined) {
+                detailParts.push(`${designer.collection_count} collections`);
             }
 
             details.textContent =

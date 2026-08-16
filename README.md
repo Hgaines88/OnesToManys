@@ -30,6 +30,27 @@ python3 -m scripts.init_db
 uvicorn app.main:app --reload
 ```
 
+In a second terminal, start the React client:
+
+```bash
+cd react-ui
+npm install
+npm run dev
+```
+
+Vite serves React at `http://localhost:5173` and proxies `/api` requests to
+FastAPI at `http://127.0.0.1:8000`. The Vanilla client is served directly by
+FastAPI at `http://127.0.0.1:8000`.
+
+### Run the tests
+
+With the virtual environment active, run the complete suite from the repository
+root:
+
+```bash
+pytest -q
+```
+
 To print the designers currently stored in the archive from the project root,
 run the utility script as a Python module:
 
@@ -74,7 +95,7 @@ sql/schema.sql
 data/archive.json
     #The canonical archive content. It is deterministic, human-readable, portable, and committed separately from schema migrations.
 sql/seed.sql
-    #Legacy instructional seed data retained for the original SQL exercise and tests. New archive content belongs in data/archive.json, not in a migration.
+    #Legacy instructional seed data retained for the original SQL exercise and tests. Migrations 001 and 003–005 are historical data corrections retained for reproducibility; all new curated content goes through data/archive.json rather than new data migrations.
 scripts/init_db.py
     #Init_db.py restores the canonical JSON archive only when the database does not exist.
 app/database.py

@@ -30,6 +30,9 @@ export default function DesignerList() {
             nationalityFlags(designer.nationality),
             designer.nationality,
             designer.birth_year ? `Born ${designer.birth_year}` : null,
+            designer.collection_count !== undefined
+              ? `${designer.collection_count} collections`
+              : null,
           ].filter(Boolean);
           return (
             <article className="card" key={designer.id}>

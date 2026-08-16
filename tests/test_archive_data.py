@@ -5,6 +5,10 @@ from pathlib import Path
 from scripts.archive_data import export_archive, import_archive
 
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+ARCHIVE = PROJECT_ROOT / "data" / "archive.json"
+
+
 def archive_counts(database_path):
     connection = sqlite3.connect(database_path)
     try:
@@ -22,7 +26,7 @@ def test_export_import_round_trip_preserves_content(tmp_path):
     first_json = tmp_path / "first.json"
     second_json = tmp_path / "second.json"
 
-    import_archive(source, Path("data/archive.json"), replace=True)
+    import_archive(source, ARCHIVE, replace=True)
     export_archive(source, first_json)
     import_archive(restored, first_json, replace=True)
     export_archive(restored, second_json)
@@ -33,7 +37,7 @@ def test_export_import_round_trip_preserves_content(tmp_path):
 
 def test_merge_import_is_idempotent(tmp_path):
     database = tmp_path / "archive.db"
-    archive = Path("data/archive.json")
+    archive = ARCHIVE
 
     import_archive(database, archive)
     initial_counts = archive_counts(database)

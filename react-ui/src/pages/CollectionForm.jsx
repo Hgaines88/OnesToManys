@@ -87,6 +87,7 @@ export default function CollectionForm() {
           <small>Use a source you trust and an official brand or publisher video.</small>
         </fieldset>
         <button className="button" type="submit">{editing ? "Save changes" : "Save collection"}</button>
+        <StatusMessage error>{error}</StatusMessage>
       </form>
     </>
   );

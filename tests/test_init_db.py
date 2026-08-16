@@ -1,7 +1,12 @@
+import json
 import sqlite3
+from pathlib import Path
 
 from app import database
 from scripts import init_db
+
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
 def test_fresh_initialization_uses_canonical_archive(tmp_path, monkeypatch):
@@ -22,4 +27,7 @@ def test_fresh_initialization_uses_canonical_archive(tmp_path, monkeypatch):
     finally:
         connection.close()
 
-    assert counts == (43, 260)
+    payload = json.loads(
+        (PROJECT_ROOT / "data" / "archive.json").read_text(encoding="utf-8")
+    )
+    assert counts == (len(payload["designers"]), len(payload["collections"]))

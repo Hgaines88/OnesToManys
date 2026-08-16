@@ -15,6 +15,54 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(title="Collection Archive", lifespan=lifespan)
 
 
+COLLECTION_SELECT = """
+    SELECT
+        collections.id,
+        collections.designer_id,
+        designers.full_name AS lead_designer,
+        collections.label,
+        collections.name,
+        collections.season,
+        collections.release_year,
+        collections.status,
+        collections.piece_count,
+        collections.description,
+        (
+            SELECT media_value
+            FROM collection_media
+            WHERE collection_id = collections.id
+              AND media_type = 'source'
+        ) AS source_url,
+        (
+            SELECT media_value
+            FROM collection_media
+            WHERE collection_id = collections.id
+              AND media_type = 'youtube'
+        ) AS youtube_video_id
+    FROM collections
+    JOIN designers
+        ON designers.id = collections.designer_id
+"""
+
+
+def fetch_collection(
+    connection: sqlite3.Connection,
+    collection_id: int,
+) -> dict:
+    row = connection.execute(
+        COLLECTION_SELECT + " WHERE collections.id = ?",
+        (collection_id,),
+    ).fetchone()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Collection not found",
+        )
+
+    return dict(row)
+
+
 def sync_collection_media(
     connection: sqlite3.Connection,
     collection_id: int,
@@ -58,14 +106,18 @@ def list_designers():
         rows = connection.execute(
             """
             SELECT
-                id,
-                full_name,
-                nationality,
-                birth_year,
-                website,
-                biography
+                designers.id,
+                designers.full_name,
+                designers.nationality,
+                designers.birth_year,
+                designers.website,
+                designers.biography,
+                COUNT(collections.id) AS collection_count
             FROM designers
-            ORDER BY full_name
+            LEFT JOIN collections
+                ON collections.designer_id = designers.id
+            GROUP BY designers.id
+            ORDER BY designers.full_name
             """
         ).fetchall()
 
@@ -164,46 +216,7 @@ def get_collection(collection_id: int):
     connection = connect()
 
     try:
-        row = connection.execute(
-            """
-            SELECT
-                collections.id,
-                collections.designer_id,
-                designers.full_name AS lead_designer,
-                collections.label,
-                collections.name,
-                collections.season,
-                collections.release_year,
-                collections.status,
-                collections.piece_count,
-                collections.description,
-                (
-                    SELECT media_value
-                    FROM collection_media
-                    WHERE collection_id = collections.id
-                      AND media_type = 'source'
-                ) AS source_url,
-                (
-                    SELECT media_value
-                    FROM collection_media
-                    WHERE collection_id = collections.id
-                      AND media_type = 'youtube'
-                ) AS youtube_video_id
-            FROM collections
-            JOIN designers
-                ON designers.id = collections.designer_id
-            WHERE collections.id = ?
-            """,
-            (collection_id,),
-        ).fetchone()
-
-        if row is None:
-            raise HTTPException(
-                status_code=404,
-                detail="Collection not found",
-            )
-
-        return dict(row)
+        return fetch_collection(connection, collection_id)
     finally:
         connection.close()
 
@@ -429,19 +442,7 @@ def create_collection(payload: CollectionCreate):
 
         connection.commit()
 
-        row = connection.execute(
-            """
-            SELECT *
-            FROM collections
-            WHERE id = ?
-            """,
-            (cursor.lastrowid,),
-        ).fetchone()
-
-        result = dict(row)
-        result["source_url"] = payload.source_url
-        result["youtube_video_id"] = payload.youtube_video_id
-        return result
+        return fetch_collection(connection, cursor.lastrowid)
 
     except sqlite3.IntegrityError as error:
         connection.rollback()
@@ -533,19 +534,7 @@ def update_collection(
 
         connection.commit()
 
-        updated_collection = connection.execute(
-            """
-            SELECT *
-            FROM collections
-            WHERE id = ?
-            """,
-            (collection_id,),
-        ).fetchone()
-
-        result = dict(updated_collection)
-        result["source_url"] = payload.source_url
-        result["youtube_video_id"] = payload.youtube_video_id
-        return result
+        return fetch_collection(connection, collection_id)
 
     except sqlite3.IntegrityError as error:
         connection.rollback()
@@ -646,6 +635,18 @@ def list_collections():
         return [dict(row) for row in rows]
     finally:
         connection.close()
+
+
+@app.post(
+    "/designers/{designer_id}/collections",
+    status_code=status.HTTP_201_CREATED,
+)
+def create_designer_collection(
+    designer_id: int,
+    payload: CollectionCreate,
+):
+    payload = payload.model_copy(update={"designer_id": designer_id})
+    return create_collection(payload)
 
 app.mount(
     "/",

@@ -130,6 +130,35 @@ def test_blank_and_unsafe_designer_websites(client):
     assert unsafe_response.status_code == 422
 
 
+def test_malformed_designer_domain_is_rejected(client):
+    response = client.post(
+        "/designers",
+        json={
+            "full_name": "Malformed Domain Designer",
+            "website": "https://not a url at all !!",
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_designer_without_collections_is_listed_with_zero_count(client):
+    created = client.post(
+        "/designers",
+        json={"full_name": "Zero Collection Designer"},
+    )
+    assert created.status_code == 201
+
+    designers = client.get("/designers").json()
+    listed = next(
+        designer
+        for designer in designers
+        if designer["id"] == created.json()["id"]
+    )
+
+    assert listed["collection_count"] == 0
+
+
 def test_list_collections_for_designer(client):
     response = client.get("/designers/1/collections")
 
@@ -282,3 +311,110 @@ def test_deleting_designer_cascades_to_collections(client):
     )
 
     assert missing_collection_response.status_code == 404
+
+
+def test_designer_update_round_trip(client):
+    created = client.post(
+        "/designers",
+        json={"full_name": "Update Round Trip Designer"},
+    )
+    assert created.status_code == 201
+    designer_id = created.json()["id"]
+
+    updated = client.put(
+        f"/designers/{designer_id}",
+        json={
+            "full_name": "Update Round Trip Designer",
+            "nationality": "Canadian",
+            "birth_year": 1979,
+            "website": "example.org",
+            "biography": "Updated through the API.",
+        },
+    )
+
+    assert updated.status_code == 200
+    assert updated.json()["nationality"] == "Canadian"
+    assert updated.json()["birth_year"] == 1979
+    assert updated.json()["website"] == "https://example.org"
+
+    reread = client.get(f"/designers/{designer_id}")
+    assert reread.json() == updated.json()
+
+
+def test_updating_a_missing_designer_returns_404(client):
+    response = client.put(
+        "/designers/999999",
+        json={"full_name": "Nobody"},
+    )
+    assert response.status_code == 404
+
+
+def test_duplicate_designer_name_returns_409(client):
+    existing = client.get("/designers").json()[0]["full_name"]
+
+    response = client.post("/designers", json={"full_name": existing})
+
+    assert response.status_code == 409
+    assert response.json() == {
+        "detail": "A designer with this name already exists"
+    }
+
+
+def test_duplicate_collection_returns_409(client):
+    designers = client.get("/designers").json()
+    designer_id = designers[0]["id"]
+    payload = {
+        "designer_id": designer_id,
+        "label": "Duplicate Guard Label",
+        "season": "Resort",
+        "release_year": 2029,
+        "status": "concept",
+    }
+
+    first = client.post("/collections", json=payload)
+    second = client.post("/collections", json=payload)
+
+    assert first.status_code == 201
+    assert second.status_code == 409
+    assert second.json() == {"detail": "This collection already exists"}
+
+
+def test_collection_for_unknown_designer_returns_404(client):
+    response = client.post(
+        "/collections",
+        json={
+            "designer_id": 999999,
+            "label": "Orphan Label",
+            "season": "Resort",
+            "release_year": 2029,
+            "status": "concept",
+        },
+    )
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Designer not found"}
+
+
+def test_nested_collection_create_uses_path_designer(client):
+    designers = client.get("/designers").json()
+    designer_id = designers[0]["id"]
+
+    response = client.post(
+        f"/designers/{designer_id}/collections",
+        json={
+            "designer_id": 999999,
+            "label": "Nested Route Label",
+            "season": "Resort",
+            "release_year": 2029,
+            "status": "concept",
+        },
+    )
+
+    assert response.status_code == 201
+    assert response.json()["designer_id"] == designer_id
+
+    collections = client.get(
+        f"/designers/{designer_id}/collections"
+    ).json()
+    assert response.json()["id"] in {
+        collection["id"] for collection in collections
+    }

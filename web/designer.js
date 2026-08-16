@@ -1,23 +1,3 @@
-function nationalityFlags(nationality) {
-    return {
-        American: "🇺🇸",
-        Belgian: "🇧🇪",
-        British: "🇬🇧",
-        "British-Jamaican": "🇬🇧 🇯🇲",
-        Canadian: "🇨🇦",
-        "Dominican-American": "🇩🇴 🇺🇸",
-        French: "🇫🇷",
-        "French-Belgian": "🇫🇷 🇧🇪",
-        Georgian: "🇬🇪",
-        German: "🇩🇪",
-        Italian: "🇮🇹",
-        Japanese: "🇯🇵",
-        "Liberian-American": "🇱🇷 🇺🇸",
-        "Northern Irish": "🇬🇧",
-    }[nationality] || "";
-}
-
-
 async function loadDesigner() {
     const parameters = new URLSearchParams(window.location.search);
     const designerId = parameters.get("id");
@@ -95,19 +75,21 @@ async function loadDesigner() {
         const collectionList =
             document.querySelector("#collection-list");
 
-        for (const collection of collections) {
+        for (const [index, collection] of collections.entries()) {
             const item = document.createElement("li");
-
             const link = document.createElement("a");
+            const number = document.createElement("i");
+            const title = document.createElement("strong");
+            const season = document.createElement("span");
 
-            link.textContent =
-                `${collection.label} — ` +
-                `${collection.season} ${collection.release_year}`;
-
+            number.textContent = String(index + 1).padStart(2, "0");
+            title.textContent = collection.name || collection.label;
+            season.textContent = collection.name
+                ? `${collection.label} · ${collection.season} ${collection.release_year}`
+                : `${collection.season} ${collection.release_year}`;
             link.href = `/collection.html?id=${collection.id}`;
-
+            link.append(number, title, season);
             item.append(link);
-
             collectionList.append(item);
         }
 

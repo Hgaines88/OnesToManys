@@ -96,6 +96,7 @@ form.addEventListener("submit", async function (event) {
     };
 
     statusMessage.textContent = "Saving collection...";
+    statusMessage.classList.remove("error");
 
     try {
         const endpoint = isEditing
@@ -113,17 +114,19 @@ form.addEventListener("submit", async function (event) {
             body: JSON.stringify(payload),
         });
 
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(
-                result.detail || "Collection could not be saved"
-            );
-        }
+        const result = await readJson(
+            response,
+            "Collection could not be saved"
+        );
 
         window.location.href =
             `/collection.html?id=${result.id}`;
     } catch (error) {
         statusMessage.textContent = error.message;
+        statusMessage.classList.toggle("error", true);
+        statusMessage.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+        });
     }
 });
