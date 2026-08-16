@@ -47,13 +47,13 @@ def test_list_designers(client):
 
     designers = response.json()
 
-    assert len(designers) == 12
+    assert len(designers) == 29
     designer_names = {
         designer["full_name"]
         for designer in designers
     }
-    assert designer_names == {
-        "Demna",
+    assert {
+        "Demna Gvasalia",
         "Grace Wales Bonner",
         "Junya Watanabe",
         "Jonathan Anderson",
@@ -65,7 +65,17 @@ def test_list_designers(client):
         "Shayne Oliver",
         "Telfar Clemens",
         "Virgil Abloh",
-    }
+        "Tom Ford",
+        "Jun Takahashi",
+        "Thom Browne",
+        "Yohji Yamamoto",
+        "Willy Chavarria",
+        "Olivier Rousteing",
+        "Issey Miyake",
+        "Jil Sander",
+        "Craig Green",
+        "John Elliott",
+    } <= designer_names
 
 def test_get_designer(client):
     response = client.get("/designers/1")

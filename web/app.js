@@ -1,10 +1,14 @@
 function nationalityFlags(nationality) {
     return {
         American: "🇺🇸",
+        Belgian: "🇧🇪",
         British: "🇬🇧",
         "British-Jamaican": "🇬🇧 🇯🇲",
         Canadian: "🇨🇦",
+        "Dominican-American": "🇩🇴 🇺🇸",
+        French: "🇫🇷",
         Georgian: "🇬🇪",
+        German: "🇩🇪",
         Italian: "🇮🇹",
         Japanese: "🇯🇵",
         "Liberian-American": "🇱🇷 🇺🇸",

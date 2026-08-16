@@ -1,10 +1,14 @@
 function nationalityFlags(nationality) {
     return {
         American: "🇺🇸",
+        Belgian: "🇧🇪",
         British: "🇬🇧",
         "British-Jamaican": "🇬🇧 🇯🇲",
         Canadian: "🇨🇦",
+        "Dominican-American": "🇩🇴 🇺🇸",
+        French: "🇫🇷",
         Georgian: "🇬🇪",
+        German: "🇩🇪",
         Italian: "🇮🇹",
         Japanese: "🇯🇵",
         "Liberian-American": "🇱🇷 🇺🇸",
@@ -48,10 +52,11 @@ async function loadDesigner() {
             `/designer-form.html?id=${designer.id}`;
 
         const flags = nationalityFlags(designer.nationality);
-        document.querySelector("#designer-name").textContent =
-            flags
-                ? `${flags} ${designer.full_name}`
-                : designer.full_name;
+        const flagElement = document.querySelector("#designer-flag");
+        flagElement.textContent = flags;
+        flagElement.hidden = !flags;
+        document.querySelector("#designer-name-text").textContent =
+            designer.full_name;
 
         const details = [
             designer.nationality,

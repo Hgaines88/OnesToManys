@@ -1,79 +1,66 @@
-body {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 24px;
-    color: #222;
-    background: #f7f5f1;
-    font-family: Georgia, serif;
-    line-height: 1.6;
-}
-
-header,
-nav,
-main {
-    margin-bottom: 32px;
-}
-
-h1,
-h2,
-h3 {
-    line-height: 1.2;
-}
-
-a {
-    color: #663c2f;
-}
-
-a:hover {
-    color: #a35f49;
-}
-
-ul {
-    padding: 0;
-    list-style: none;
-}
-
-li {
-    margin-bottom: 16px;
-    padding: 16px;
-    background: white;
-    border: 1px solid #ddd7ce;
-}
-
-#status {
-    color: #666;
-}
-
-#designer-biography,
-#collection-description {
-    max-width: 65ch;
-}
-
-.collection-heading {
-    align-items: center;
-    display: flex;
-    gap: 1rem;
-}
-
-.label-monogram {
-    align-items: center;
-    background: #1f1b18;
-    border-radius: 50%;
-    color: white;
-    display: flex;
-    flex: 0 0 4rem;
-    font-weight: bold;
-    height: 4rem;
-    justify-content: center;
-}
-
-.video-frame {
-    aspect-ratio: 16 / 9;
-    max-width: 900px;
-}
-
-.video-frame iframe {
-    border: 0;
-    height: 100%;
-    width: 100%;
-}
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root { --ink:#080808; --paper:#f1f1ec; --signal:#b7ff00; --dim:#8a8a84; --line:#44443f; font-family:"IBM Plex Mono",monospace; color:var(--paper); background:var(--ink); }
+* { box-sizing:border-box; }
+html,body { min-width:320px; min-height:100%; margin:0; background:var(--ink); }
+body::before { position:fixed; inset:0; z-index:20; pointer-events:none; content:""; opacity:.14; background:repeating-linear-gradient(0deg,transparent 0 3px,#000 3px 4px); mix-blend-mode:multiply; }
+::selection { color:var(--ink); background:var(--signal); }
+.site-header { min-height:100px; margin:0; padding:1rem clamp(1rem,3vw,2.5rem); border-bottom:1px solid var(--paper); display:flex; align-items:center; justify-content:space-between; gap:2rem; }
+.brand { display:flex; flex-direction:column; color:var(--paper); font-family:"Archivo Black",sans-serif; font-size:clamp(1.7rem,4vw,3.4rem); line-height:.78; letter-spacing:-.07em; text-decoration:none; }
+.brand small { margin-top:.9rem; font-family:"IBM Plex Mono",monospace; font-size:.58rem; line-height:1; letter-spacing:.15em; }
+.signal-stack { display:flex; flex-direction:column; align-items:flex-end; gap:.42rem; }
+.signal { display:flex; align-items:center; gap:.65rem; border:1px solid var(--line); padding:.6rem .75rem; color:var(--signal); font-size:.68rem; }
+.signal i { width:.55rem; height:.55rem; border-radius:50%; background:var(--signal); box-shadow:0 0 12px var(--signal); animation:blink 1.4s step-end infinite; }
+.signal b { color:var(--dim); font-weight:400; }
+.signature { margin-right:.18rem; font-size:.7rem; letter-spacing:-.03em; transform:rotate(-2deg); opacity:.78; }
+@keyframes blink { 50% { opacity:.15; } }
+.ticker { overflow:hidden; margin:0; padding:.42rem 0; border-bottom:1px solid var(--paper); color:var(--ink); background:var(--signal); white-space:nowrap; font-size:.72rem; font-weight:600; letter-spacing:.1em; }
+main { width:min(1500px,calc(100% - 2rem)); margin:0 auto; padding:clamp(3rem,7vw,7rem) 0 7rem; }
+.hero { position:relative; min-height:52vh; margin:0 0 4rem; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; }
+.hero .button { position:absolute; right:0; bottom:0; }
+h1,h2,h3 { font-family:"Archivo Black",sans-serif; text-transform:uppercase; }
+h1 { max-width:1200px; margin:.35rem 0 2rem; font-size:clamp(4rem,12vw,10.5rem); line-height:.76; letter-spacing:-.075em; }
+h2 { letter-spacing:-.05em; }
+.section-title { margin-top:5rem; padding-top:1rem; border-top:1px solid var(--paper); font-size:clamp(2rem,6vw,5rem); }
+p { line-height:1.65; }
+.eyebrow { margin:0 0 1rem; color:var(--signal); font-size:.72rem; font-weight:600; letter-spacing:.15em; text-transform:uppercase; }
+a { color:inherit; text-underline-offset:.22em; }
+a:hover { color:var(--signal); }
+.button,button,#add-collection-link,#edit-designer,#edit-collection { display:inline-block; min-width:150px; margin:.2rem 0; padding:.85rem 1rem; border:1px solid var(--paper); color:var(--ink); background:var(--paper); cursor:pointer; text-align:center; text-decoration:none; text-transform:uppercase; font:600 .7rem "IBM Plex Mono",monospace; letter-spacing:.08em; }
+.button:hover,button:hover,#add-collection-link:hover,#edit-designer:hover,#edit-collection:hover { border-color:var(--signal); color:var(--ink); background:var(--signal); }
+#delete-designer,#delete-collection { border-color:#ff4b39; color:#ff4b39; background:transparent; }
+.actions { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; margin:2rem 0; }
+.actions p { margin:0; }
+ul { margin:0; padding:0; border-top:1px solid var(--paper); border-left:1px solid var(--paper); list-style:none; }
+#designer-list { display:grid; grid-template-columns:repeat(12,1fr); }
+li { position:relative; padding:1rem; border-right:1px solid var(--paper); border-bottom:1px solid var(--paper); background:var(--ink); transition:.15s; }
+#designer-list li { grid-column:span 4; min-height:250px; }
+#designer-list li:nth-child(5n + 1),#designer-list li:nth-child(5n + 4) { grid-column:span 8; }
+li:hover { color:var(--ink); background:var(--signal); }
+li h3 { max-width:14ch; margin:5rem 0 .75rem; font-size:clamp(1.55rem,3.2vw,3.4rem); line-height:.9; }
+li h3 a,li>a { text-decoration:none; }
+li p { margin:0; color:var(--dim); font-size:.68rem; text-transform:uppercase; }
+li:hover a,li:hover p { color:var(--ink); }
+#collection-list { border-left:0; }
+#collection-list li { padding:1.1rem .5rem; }
+#collection-list li a { display:block; text-transform:uppercase; }
+#status { color:var(--signal); }
+#designer-details,#collection-designer,#collection-season,#collection-status,#collection-piece-count { color:var(--dim); font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; }
+#designer-biography,#collection-description { max-width:75ch; font-size:clamp(1rem,1.5vw,1.35rem); }
+.profile-flag { display:inline-block; margin-right:.55rem; font-family:sans-serif; font-size:clamp(1.35rem,2.2vw,2.15rem); line-height:1; vertical-align:.32em; white-space:nowrap; filter:grayscale(1) contrast(1.8); -webkit-filter:grayscale(1) contrast(1.8); }
+.collection-heading { display:grid; grid-template-columns:auto 1fr; align-items:start; gap:1.5rem; }
+.label-monogram { display:flex; align-items:center; justify-content:center; width:5rem; height:5rem; border:1px solid var(--signal); color:var(--signal); font-weight:600; letter-spacing:.08em; }
+#collection-media { margin-top:5rem; padding-top:1rem; border-top:1px solid var(--paper); }
+#collection-media h2 { font-size:clamp(2rem,6vw,5rem); }
+.video-frame { position:relative; max-width:1100px; aspect-ratio:16/9; border:1px solid var(--paper); background:#000; box-shadow:12px 12px 0 var(--signal); }
+.video-frame::after { position:absolute; top:.75rem; right:.75rem; content:"ARCHIVE FEED"; padding:.25rem .4rem; color:var(--ink); background:var(--signal); font-size:.58rem; }
+.video-frame iframe { width:100%; height:100%; border:0; }
+form { display:grid; gap:1rem; max-width:760px; }
+form p { display:grid; gap:.45rem; margin:0; }
+label { font-size:.7rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
+input,select,textarea { width:100%; padding:1rem; border:1px solid var(--line); border-radius:0; outline:0; color:var(--paper); background:#111; font:inherit; }
+input:focus,select:focus,textarea:focus { border-color:var(--signal); box-shadow:5px 5px 0 var(--signal); }
+fieldset { display:grid; gap:1rem; margin:.5rem 0; padding:1.2rem; border:1px solid var(--line); }
+legend { padding:0 .5rem; color:var(--signal); font-size:.75rem; text-transform:uppercase; }
+small { color:var(--dim); }
+@media (max-width:760px) { .site-header{align-items:flex-start}.signal b{display:none}main{width:calc(100% - 1rem)}.hero{min-height:42vh}.hero .button{position:static;margin-top:2rem}#designer-list li{grid-column:span 12!important;min-height:190px}.collection-heading{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:reduce) { .signal i { animation:none; } }

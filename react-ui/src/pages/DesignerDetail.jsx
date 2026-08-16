@@ -38,11 +38,10 @@ export default function DesignerDetail() {
   const details = [designer.nationality, designer.birth_year ? `Born ${designer.birth_year}` : null].filter(Boolean);
   return (
     <>
-      <p className="eyebrow">Designer profile</p>
-      <h1>{flags && <span className="profile-flag" aria-label={`${designer.nationality} flag`}>{flags}</span>}{designer.full_name}</h1>
-      <p className="meta">{details.join(" · ") || "Additional details unavailable"}</p>
-      <p>{designer.biography || "No biography is available."}</p>
-      <p>{designer.website ? <a href={designer.website} target="_blank" rel="noreferrer">Visit website ↗</a> : "No website is available."}</p>
+      <p className="eyebrow">Designer profile / ID {String(designer.id).padStart(3, "0")}</p>
+      <h1 className="profile-title">{flags && <span className="profile-flag" aria-label={`${designer.nationality} flag`}>{flags}</span>}{designer.full_name}</h1>
+      <div className="profile-intro"><p className="meta">{details.join(" · ") || "Additional details unavailable"}</p><p className="biography">{designer.biography || "No biography is available."}</p></div>
+      <p className="external-link">{designer.website ? <a href={designer.website} target="_blank" rel="noreferrer">Official transmission ↗</a> : "No website is available."}</p>
       <div className="actions">
         <Link className="button" to={`/designers/${designerId}/collections/new`}>Add a collection</Link>
         <Link className="button secondary" to={`/designers/${designerId}/edit`}>Edit designer</Link>
@@ -50,11 +49,11 @@ export default function DesignerDetail() {
       </div>
       <StatusMessage error>{error}</StatusMessage>
       <section className="section">
-        <h2>Collections</h2>
+        <div className="section-heading"><h2>Collections</h2><span>{String(collections.length).padStart(2, "0")} records</span></div>
         {collections.length === 0 ? <p>No collections have been added.</p> : (
           <ul className="collection-list">
-            {collections.map((collection) => (
-              <li key={collection.id}><Link to={`/collections/${collection.id}`}><strong>{collection.name || collection.label}</strong><span>{collection.label} · {collection.season} {collection.release_year}</span></Link></li>
+            {collections.map((collection, index) => (
+              <li key={collection.id}><Link to={`/collections/${collection.id}`}><i>{String(index + 1).padStart(2, "0")}</i><strong>{collection.name || collection.label}</strong><span>{collection.label} · {collection.season} {collection.release_year}</span></Link></li>
             ))}
           </ul>
         )}

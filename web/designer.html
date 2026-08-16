@@ -10,20 +10,19 @@
     <title>Designer | Collection Archive</title>
 </head>
 <body>
-    <nav>
-        <a href="/">Collection Archive</a>
-    </nav>
+    <nav class="site-header"><a class="brand" href="/"><span>ONE→MANY</span><small>DESIGN TRANSMISSION ARCHIVE</small></a><div class="signal-stack"><span class="signal"><i></i> LIVE DATABASE <b>CH. 000</b></span><span class="signature">(h)gaines.</span></div></nav><div class="ticker">DESIGNER → LABEL → SEASON → IMAGE → MOVEMENT → MEMORY → DESIGNER → LABEL → SEASON →</div>
 
     <main>
         <p id="status">Loading designer...</p>
 
         <section id="profile" hidden>
-            <h1 id="designer-name"></h1>
+            <p class="eyebrow">DESIGNER PROFILE / ARCHIVE RECORD</p><h1 id="designer-name"><span id="designer-flag" class="profile-flag"></span><span id="designer-name-text"></span></h1>
             <p id="designer-details"></p>
             <p id="designer-website"></p>
             <p id="designer-biography"></p>
 
-            <h2>Collections</h2>
+            <h2 class="section-title">Collections</h2>
+            <div class="actions">
             <p>
                 <a id="add-collection-link" href="#">
                     Add a collection
@@ -39,6 +38,7 @@
                     Delete designer
                 </button>
             </p>
+            </div>
             <ul id="collection-list"></ul>
         </section>
     </main>

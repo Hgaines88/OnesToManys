@@ -139,6 +139,7 @@ def test_migration_upgrades_legacy_data_and_preserves_user_records(
         "002_create_collection_media.sql",
         "003_add_curated_runway_videos.sql",
         "004_add_demna_runway_video.sql",
+        "005_preserve_curated_archive.sql",
     ]
     assert second_run == []
     assert migration_count == 1
@@ -156,7 +157,7 @@ def test_migration_upgrades_legacy_data_and_preserves_user_records(
         "This user collection must survive.",
     )
     assert {
-        ("Demna", "Balenciaga"),
+            ("Demna Gvasalia", "Balenciaga"),
         ("Virgil Abloh", "Louis Vuitton"),
         ("Junya Watanabe", "Junya Watanabe MAN"),
         ("Miuccia Prada", "Prada"),

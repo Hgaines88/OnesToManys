@@ -18,14 +18,14 @@ export default function DesignerList() {
 
   return (
     <>
-      <div className="page-heading">
-        <div><p className="eyebrow">The directory</p><h1>Designers</h1></div>
+      <div className="page-heading hero-heading">
+        <div><p className="eyebrow">Index / {String(designers.length).padStart(3, "0")} active profiles</p><h1>Who<br />made it?</h1></div>
         <Link className="button" to="/designers/new">Add a designer</Link>
       </div>
       <StatusMessage>{loading ? "Loading designers…" : ""}</StatusMessage>
       <StatusMessage error>{error}</StatusMessage>
       <div className="card-grid">
-        {designers.map((designer) => {
+        {designers.map((designer, index) => {
           const details = [
             nationalityFlags(designer.nationality),
             designer.nationality,
@@ -33,7 +33,8 @@ export default function DesignerList() {
           ].filter(Boolean);
           return (
             <article className="card" key={designer.id}>
-              <h2><Link to={`/designers/${designer.id}`}>{designer.full_name}</Link></h2>
+              <span className="card-index">{String(index + 1).padStart(3, "0")}</span>
+              <h2><Link to={`/designers/${designer.id}`}>{designer.full_name}<span className="arrow">↗</span></Link></h2>
               <p>{details.join(" · ") || "Additional details unavailable"}</p>
             </article>
           );
