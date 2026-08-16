@@ -6,6 +6,7 @@ const FLAGS_BY_NATIONALITY = {
   Canadian: "🇨🇦",
   "Dominican-American": "🇩🇴 🇺🇸",
   French: "🇫🇷",
+  "French-Belgian": "🇫🇷 🇧🇪",
   Georgian: "🇬🇪",
   German: "🇩🇪",
   Italian: "🇮🇹",

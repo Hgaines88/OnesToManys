@@ -7,6 +7,7 @@ function nationalityFlags(nationality) {
         Canadian: "🇨🇦",
         "Dominican-American": "🇩🇴 🇺🇸",
         French: "🇫🇷",
+        "French-Belgian": "🇫🇷 🇧🇪",
         Georgian: "🇬🇪",
         German: "🇩🇪",
         Italian: "🇮🇹",
