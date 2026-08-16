@@ -1,11 +1,11 @@
 import sqlite3
 from pathlib import Path
 
+from scripts.archive_data import DEFAULT_ARCHIVE, import_archive
+
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATABASE_PATH = PROJECT_ROOT / "data" / "archive.db"
-SCHEMA_PATH = PROJECT_ROOT / "sql" / "schema.sql"
-SEED_PATH = PROJECT_ROOT / "sql" / "seed.sql"
 
 
 def initialize_database() -> bool:
@@ -15,12 +15,32 @@ def initialize_database() -> bool:
     if DATABASE_PATH.exists():
         return False
 
-    connection = sqlite3.connect(DATABASE_PATH)
+    import_archive(DATABASE_PATH, DEFAULT_ARCHIVE, replace=True)
 
+    # A canonical restore is already at the latest content baseline. Recording
+    # existing migrations prevents legacy data migrations from replaying over it
+    # when FastAPI starts for the first time.
+    connection = sqlite3.connect(DATABASE_PATH)
     try:
-        connection.execute("PRAGMA foreign_keys = ON")
-        connection.executescript(SCHEMA_PATH.read_text())
-        connection.executescript(SEED_PATH.read_text())
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS schema_migrations (
+                filename TEXT PRIMARY KEY,
+                applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+        migration_names = [
+            path.name
+            for path in sorted(
+                (PROJECT_ROOT / "sql" / "migrations").glob("*.sql")
+            )
+        ]
+        connection.executemany(
+            "INSERT OR IGNORE INTO schema_migrations (filename) VALUES (?)",
+            [(name,) for name in migration_names],
+        )
+        connection.commit()
     finally:
         connection.close()
 
@@ -31,6 +51,6 @@ if __name__ == "__main__":
     created = initialize_database()
 
     if created:
-        print(f"Database initialized at {DATABASE_PATH}")
+        print(f"Database initialized from {DEFAULT_ARCHIVE} at {DATABASE_PATH}")
     else:
         print(f"Database already exists; left unchanged at {DATABASE_PATH}")

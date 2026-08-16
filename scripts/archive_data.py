@@ -1,0 +1,245 @@
+"""Export and restore the curated archive as deterministic, reviewable JSON."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sqlite3
+import unicodedata
+from pathlib import Path
+
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_DATABASE = PROJECT_ROOT / "data" / "archive.db"
+DEFAULT_ARCHIVE = PROJECT_ROOT / "data" / "archive.json"
+SCHEMA_PATH = PROJECT_ROOT / "sql" / "schema.sql"
+
+
+def stable_key(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value)
+    ascii_value = normalized.encode("ascii", "ignore").decode("ascii")
+    return "-".join(
+        part for part in "".join(
+            character.lower() if character.isalnum() else " "
+            for character in ascii_value
+        ).split()
+    )
+
+
+def export_archive(database_path: Path, archive_path: Path) -> dict:
+    connection = sqlite3.connect(database_path)
+    connection.row_factory = sqlite3.Row
+
+    try:
+        designer_rows = connection.execute(
+            """
+            SELECT full_name, nationality, birth_year, website, biography
+            FROM designers
+            ORDER BY full_name COLLATE NOCASE
+            """
+        ).fetchall()
+        collection_rows = connection.execute(
+            """
+            SELECT
+                designers.full_name AS designer_name,
+                collections.label,
+                collections.name,
+                collections.season,
+                collections.release_year,
+                collections.status,
+                collections.piece_count,
+                collections.description,
+                MAX(CASE WHEN collection_media.media_type = 'source'
+                    THEN collection_media.media_value END) AS source_url,
+                MAX(CASE WHEN collection_media.media_type = 'youtube'
+                    THEN collection_media.media_value END) AS youtube_video_id
+            FROM collections
+            JOIN designers ON designers.id = collections.designer_id
+            LEFT JOIN collection_media
+                ON collection_media.collection_id = collections.id
+            GROUP BY collections.id
+            ORDER BY
+                designers.full_name COLLATE NOCASE,
+                collections.release_year,
+                collections.season COLLATE NOCASE,
+                collections.label COLLATE NOCASE
+            """
+        ).fetchall()
+    finally:
+        connection.close()
+
+    designers = []
+    designer_keys = {}
+    for row in designer_rows:
+        record = dict(row)
+        key = stable_key(record["full_name"])
+        if key in designer_keys.values():
+            raise ValueError(f"Duplicate stable designer key: {key}")
+        designer_keys[record["full_name"]] = key
+        designers.append({"key": key, **record})
+
+    collections = []
+    seen_collection_keys = set()
+    for row in collection_rows:
+        record = dict(row)
+        designer_key = designer_keys[record.pop("designer_name")]
+        key = stable_key(
+            f"{designer_key} {record['label']} {record['season']} "
+            f"{record['release_year']}"
+        )
+        if key in seen_collection_keys:
+            raise ValueError(f"Duplicate stable collection key: {key}")
+        seen_collection_keys.add(key)
+        collections.append({"key": key, "designer_key": designer_key, **record})
+
+    payload = {
+        "format_version": 1,
+        "designers": designers,
+        "collections": collections,
+    }
+    archive_path.parent.mkdir(parents=True, exist_ok=True)
+    archive_path.write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    return payload
+
+
+def import_archive(
+    database_path: Path,
+    archive_path: Path,
+    *,
+    replace: bool = False,
+) -> dict[str, int]:
+    payload = json.loads(archive_path.read_text(encoding="utf-8"))
+    if payload.get("format_version") != 1:
+        raise ValueError("Unsupported archive format_version")
+
+    database_path.parent.mkdir(parents=True, exist_ok=True)
+    connection = sqlite3.connect(database_path)
+    connection.execute("PRAGMA foreign_keys = ON")
+
+    try:
+        if not connection.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='designers'"
+        ).fetchone():
+            connection.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
+
+        connection.execute("BEGIN IMMEDIATE")
+        if replace:
+            connection.execute("DELETE FROM designers")
+
+        designer_ids = {}
+        for designer in payload["designers"]:
+            connection.execute(
+                """
+                INSERT INTO designers (
+                    full_name, nationality, birth_year, website, biography
+                ) VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(full_name) DO UPDATE SET
+                    nationality = excluded.nationality,
+                    birth_year = excluded.birth_year,
+                    website = excluded.website,
+                    biography = excluded.biography
+                """,
+                tuple(designer.get(field) for field in (
+                    "full_name", "nationality", "birth_year", "website", "biography"
+                )),
+            )
+            designer_ids[designer["key"]] = connection.execute(
+                "SELECT id FROM designers WHERE full_name = ?",
+                (designer["full_name"],),
+            ).fetchone()[0]
+
+        for collection in payload["collections"]:
+            designer_id = designer_ids[collection["designer_key"]]
+            values = (
+                designer_id,
+                collection["label"],
+                collection.get("name"),
+                collection["season"],
+                collection["release_year"],
+                collection["status"],
+                collection.get("piece_count"),
+                collection.get("description"),
+            )
+            connection.execute(
+                """
+                INSERT INTO collections (
+                    designer_id, label, name, season, release_year,
+                    status, piece_count, description
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(designer_id, label, season, release_year) DO UPDATE SET
+                    name = excluded.name,
+                    status = excluded.status,
+                    piece_count = excluded.piece_count,
+                    description = excluded.description
+                """,
+                values,
+            )
+            collection_id = connection.execute(
+                """
+                SELECT id FROM collections
+                WHERE designer_id = ? AND label = ? AND season = ?
+                  AND release_year = ?
+                """,
+                (designer_id, collection["label"], collection["season"],
+                 collection["release_year"]),
+            ).fetchone()[0]
+            connection.execute(
+                "DELETE FROM collection_media WHERE collection_id = ?",
+                (collection_id,),
+            )
+            media = [
+                (collection_id, "source", collection.get("source_url")),
+                (collection_id, "youtube", collection.get("youtube_video_id")),
+            ]
+            connection.executemany(
+                """
+                INSERT INTO collection_media (collection_id, media_type, media_value)
+                VALUES (?, ?, ?)
+                """,
+                [item for item in media if item[2] is not None],
+            )
+
+        connection.commit()
+    except Exception:
+        connection.rollback()
+        raise
+    finally:
+        connection.close()
+
+    return {
+        "designers": len(payload["designers"]),
+        "collections": len(payload["collections"]),
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("command", choices=("export", "import"))
+    parser.add_argument("--database", type=Path, default=DEFAULT_DATABASE)
+    parser.add_argument("--archive", type=Path, default=DEFAULT_ARCHIVE)
+    parser.add_argument(
+        "--replace",
+        action="store_true",
+        help="On import, remove existing archive records first.",
+    )
+    args = parser.parse_args()
+
+    if args.command == "export":
+        payload = export_archive(args.database, args.archive)
+        print(
+            f"Exported {len(payload['designers'])} designers and "
+            f"{len(payload['collections'])} collections to {args.archive}"
+        )
+    else:
+        counts = import_archive(args.database, args.archive, replace=args.replace)
+        print(
+            f"Imported {counts['designers']} designers and "
+            f"{counts['collections']} collections into {args.database}"
+        )
+
+
+if __name__ == "__main__":
+    main()

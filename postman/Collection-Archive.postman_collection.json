@@ -1,0 +1,99 @@
+{
+  "info": {
+    "name": "Collection Archive API",
+    "description": "CRUD and relationship validation for the OnesToManys FastAPI service.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "designerId", "value": "" },
+    { "key": "collectionId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Read archive",
+      "item": [
+        {
+          "name": "Health",
+          "request": { "method": "GET", "url": "{{baseUrl}}/health" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Service is healthy', () => pm.expect(pm.response.json().status).to.eql('ok'));"
+          ] } }]
+        },
+        {
+          "name": "List designers",
+          "request": { "method": "GET", "url": "{{baseUrl}}/designers" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('200 and a non-empty list', () => { pm.response.to.have.status(200); pm.expect(pm.response.json()).to.be.an('array').that.is.not.empty; });"
+          ] } }]
+        },
+        {
+          "name": "List collections",
+          "request": { "method": "GET", "url": "{{baseUrl}}/collections" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('200 and a non-empty list', () => { pm.response.to.have.status(200); pm.expect(pm.response.json()).to.be.an('array').that.is.not.empty; });"
+          ] } }]
+        }
+      ]
+    },
+    {
+      "name": "CRUD demonstration",
+      "item": [
+        {
+          "name": "Create demonstration designer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"full_name\": \"Postman Demonstration {{$timestamp}}\",\n  \"nationality\": \"American\",\n  \"birth_year\": 2000,\n  \"website\": \"https://example.com\",\n  \"biography\": \"Temporary validation record.\"\n}" },
+            "url": "{{baseUrl}}/designers"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('201 Created', () => pm.response.to.have.status(201));",
+            "pm.collectionVariables.set('designerId', pm.response.json().id);"
+          ] } }]
+        },
+        {
+          "name": "Create child collection",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"designer_id\": {{designerId}},\n  \"label\": \"Postman Demonstration\",\n  \"name\": \"API Validation\",\n  \"season\": \"Spring/Summer\",\n  \"release_year\": 2026,\n  \"status\": \"concept\",\n  \"piece_count\": 1,\n  \"description\": \"Temporary child record for relationship validation.\",\n  \"source_url\": \"https://example.com/source\",\n  \"youtube_video_id\": null\n}" },
+            "url": "{{baseUrl}}/collections"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('201 Created', () => pm.response.to.have.status(201));",
+            "pm.collectionVariables.set('collectionId', pm.response.json().id);"
+          ] } }]
+        },
+        {
+          "name": "Verify one-to-many relationship",
+          "request": { "method": "GET", "url": "{{baseUrl}}/designers/{{designerId}}/collections" },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Parent returns its child', () => { pm.response.to.have.status(200); const rows = pm.response.json(); pm.expect(rows.some(row => row.id === Number(pm.collectionVariables.get('collectionId')))).to.be.true; });"
+          ] } }]
+        },
+        {
+          "name": "Update designer",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"full_name\": \"Postman Demonstration Updated {{$timestamp}}\",\n  \"nationality\": \"American\",\n  \"birth_year\": 2000,\n  \"website\": \"https://example.com\",\n  \"biography\": \"Updated through the REST API.\"\n}" },
+            "url": "{{baseUrl}}/designers/{{designerId}}"
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('200 Updated', () => pm.response.to.have.status(200));"] } }]
+        },
+        {
+          "name": "Delete designer and cascade child",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/designers/{{designerId}}" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('204 Deleted', () => pm.response.to.have.status(204));"] } }]
+        },
+        {
+          "name": "Verify cascading delete",
+          "request": { "method": "GET", "url": "{{baseUrl}}/collections/{{collectionId}}" },
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('Child was deleted with parent', () => pm.response.to.have.status(404));"] } }]
+        }
+      ]
+    }
+  ]
+}

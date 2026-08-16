@@ -26,7 +26,7 @@ One designer may have many collections across many labels/seasons. (OneToMany) E
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -r requirements.txt
-python3 scripts/init_db.py
+python3 -m scripts.init_db
 uvicorn app.main:app --reload
 ```
 
@@ -37,8 +37,29 @@ run the utility script as a Python module:
 python3 -m app.list_designers
 ```
 
-`init_db.py` creates and seeds `data/archive.db` only when the database does
-not already exist. It never overwrites live archive records.
+`init_db.py` creates `data/archive.db` from the canonical `data/archive.json`
+snapshot only when the database does not already exist. It never overwrites
+live archive records.
+
+### Preserve and restore archive content
+
+SQLite is the local runtime database and remains ignored by Git. The canonical,
+reviewable content record is `data/archive.json`. After making approved content
+changes through either UI, refresh that snapshot with:
+
+```bash
+python3 -m scripts.archive_data export
+```
+
+Restore it into a new database, or merge it into an existing database, with:
+
+```bash
+python3 -m scripts.archive_data import --database data/restored.db --replace
+```
+
+Designer and collection keys in the JSON are stable text identifiers; generated
+SQLite IDs are deliberately not exported. Tests verify that export → import →
+export produces identical content and that repeated merge imports are idempotent.
 
 After initialization, designers and collections added through either web UI
 are stored in that same live database and appear in both interfaces. SQL files
@@ -50,10 +71,12 @@ never recreate the database from seed data.
 
 sql/schema.sql
     #Schema.sql defines the database tables, fields, constraints, foreign key, and index.
+data/archive.json
+    #The canonical archive content. It is deterministic, human-readable, portable, and committed separately from schema migrations.
 sql/seed.sql
-    #Seed.sql supplies starting data only when a database is first created. Existing databases may contain user additions, so rebuilding them from the seed would cause data loss. The migration system safely upgrades existing databases. FastAPI checks a migration-history table during startup, applies each pending numbered SQL file in a transaction, and records it so it cannot run twice. Normal user additions still go through the API and are immediately visible in both frontends.
+    #Legacy instructional seed data retained for the original SQL exercise and tests. New archive content belongs in data/archive.json, not in a migration.
 scripts/init_db.py
-    #Init_db.py creates and seeds the database only when it does not exist.
+    #Init_db.py restores the canonical JSON archive only when the database does not exist.
 app/database.py
     #Database.py opens and configures connections used during normal API reads and writes.
 app/schemas.py
