@@ -1,4 +1,4 @@
-# Collection Archive React UI
+# Collection Archive v0.2.0 React UI
 
 This client recreates the CRUD features in `web/` with React. During
 development, Vite forwards requests beginning with `/api` to the FastAPI
@@ -26,3 +26,7 @@ Useful checks:
 npm run lint
 npm run build
 ```
+
+---
+
+*(h)gaines.*

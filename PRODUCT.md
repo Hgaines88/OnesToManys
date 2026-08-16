@@ -4,7 +4,7 @@
 
 A public-facing archive that helps people discover which individual designers created collections for different fashion labels throughout their careers.
 
-## Version 0.2.0 user stories
+## v0.2.0 user stories
 
 - As a user, I can view all archived designers so I can discover who created fashion collections.
 - As a user, I can view the collections credited to a designer across different labels and seasons.
@@ -36,17 +36,20 @@ Description
 Curated source link
 Official YouTube runway video
 
-## Version 1 features
+## v0.2.0 features
 
 CRUD functionality for Designers & Collections by any/all users.
 
 ## Future features
 
-What are we deliberately postponing for Version 1.0.0?
+What are we deliberately postponing for v1.0.0?
 - Postponing Authentication (login) for authorized edits vs everyday users. Every edit: record the author, timestamp, previous value, and reason for the change
 - Direct image uploads and image hosting remain postponed. Collection pages can include curated source links and official YouTube embeds.
 - Support for multiple credited designers on one collection through a
-`collection_designers` junction table. This would extend the Version 1
+`collection_designers` junction table. This would extend the v0.2.0
 designer-to-collections model for collaborations and co-designer credits.
 - Authentication, Role-based permissions, edit history, rollback, and a small moderation queue.
 
+---
+
+*(h)gaines.*

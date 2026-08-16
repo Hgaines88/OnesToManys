@@ -1,4 +1,4 @@
-# Collection Archive Data Model
+# Collection Archive v0.2.0 Data Model
 
 ## Designer
 
@@ -50,3 +50,7 @@ archive stores links and YouTube video IDs, not copyrighted media files.
 - Deleting a designer deletes their collection records.
 - One collection may have a source link and a YouTube video.
 - Deleting a collection deletes its media records.
+
+---
+
+*(h)gaines.*
