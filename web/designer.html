@@ -10,16 +10,15 @@
     <title>Designer | Collection Archive</title>
 </head>
 <body>
-    <nav class="site-header"><a class="brand" href="/"><span>ONE→MANY</span><small>DESIGN TRANSMISSION ARCHIVE</small></a><div class="signal-stack"><span class="signal"><i></i> LIVE DATABASE <b>CH. 000</b></span><span class="signature">(h)gaines.</span></div></nav><div class="ticker">DESIGNER → LABEL → SEASON → IMAGE → MOVEMENT → MEMORY → DESIGNER → LABEL → SEASON →</div>
+    <nav class="site-header"><a class="brand" href="/"><span>ONE→MANY</span><small>DESIGN TRANSMISSION ARCHIVE</small></a><div class="signal-stack"><span class="signal"><i></i> LIVE DATABASE <b>CH. 001</b></span><span class="signature">(h)gaines.</span></div></nav><div class="ticker">DESIGNER → LABEL → SEASON → IMAGE → MOVEMENT → MEMORY → DESIGNER → LABEL → SEASON →</div>
 
     <main>
         <p id="status">Loading designer...</p>
 
         <section id="profile" hidden>
-            <p class="eyebrow">DESIGNER PROFILE / ARCHIVE RECORD</p><h1 id="designer-name"><span id="designer-flag" class="profile-flag"></span><span id="designer-name-text"></span></h1>
-            <p id="designer-details"></p>
-            <p id="designer-website"></p>
-            <p id="designer-biography"></p>
+            <p id="profile-id" class="eyebrow"></p><h1 id="designer-name" class="profile-title"><span id="designer-flag" class="profile-flag"></span><span id="designer-name-text"></span></h1>
+            <div class="profile-intro"><p id="designer-details"></p><p id="designer-biography"></p></div>
+            <p id="designer-website" class="external-link"></p>
 
             <div class="actions">
             <p>
@@ -38,11 +37,13 @@
                 </button>
             </p>
             </div>
-            <h2 class="section-title">Collections</h2>
-            <ul id="collection-list" class="collection-list"></ul>
+            <section class="section"><div class="section-heading"><h2>Collections</h2><span id="collection-count"></span></div><ul id="collection-list" class="collection-list"></ul></section>
         </section>
     </main>
 
+    <footer class="site-footer"><span>PUBLIC ACCESS / OPEN ARCHIVE</span><span class="digital-signature">(h)gaines.</span><span class="footer-year">NYC</span></footer>
+
+    <script src="/layout.js" defer></script>
     <script src="/flags.js" defer></script>
     <script src="/designer.js" defer></script>
 </body>

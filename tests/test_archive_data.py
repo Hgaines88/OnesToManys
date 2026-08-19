@@ -44,3 +44,56 @@ def test_merge_import_is_idempotent(tmp_path):
     import_archive(database, archive)
 
     assert archive_counts(database) == initial_counts
+
+
+def test_new_designer_profiles_have_expected_career_records():
+    payload = json.loads(ARCHIVE.read_text(encoding="utf-8"))
+    designers = {
+        designer["key"]: designer
+        for designer in payload["designers"]
+    }
+    collections = payload["collections"]
+
+    assert designers["gosha-rubchinskiy"]["nationality"] == "Russian"
+    assert designers["luka-sabbat"]["nationality"] == "French-American"
+    assert designers["haider-ackermann"]["nationality"] == (
+        "French-Colombian"
+    )
+
+    gosha_collections = [
+        collection
+        for collection in collections
+        if collection["designer_key"] == "gosha-rubchinskiy"
+    ]
+    luka_collections = [
+        collection
+        for collection in collections
+        if collection["designer_key"] == "luka-sabbat"
+    ]
+    haider_collections = [
+        collection
+        for collection in collections
+        if collection["designer_key"] == "haider-ackermann"
+    ]
+
+    assert len(gosha_collections) == 7
+    assert {collection["release_year"] for collection in gosha_collections} == {
+        2009,
+        2015,
+        2016,
+        2017,
+        2018,
+    }
+    assert len(luka_collections) == 9
+    assert any(
+        collection["release_year"] == 2027
+        and collection["status"] == "in-production"
+        for collection in luka_collections
+    )
+    assert len(haider_collections) == 5
+    assert all(
+        collection["source_url"]
+        for collection in gosha_collections
+        + luka_collections
+        + haider_collections
+    )

@@ -23,6 +23,8 @@ h2 { letter-spacing:-.05em; }
 .section-title { margin-top:5rem; padding-top:1rem; border-top:1px solid var(--paper); font-size:clamp(2rem,6vw,5rem); }
 p { line-height:1.65; }
 .eyebrow { margin:0 0 1rem; color:var(--signal); font-size:.72rem; font-weight:600; letter-spacing:.15em; text-transform:uppercase; }
+.card-index { color:var(--dim); font-size:.66rem; }
+.arrow { display:inline-block; margin-left:.25em; font-family:sans-serif; font-size:.45em; vertical-align:top; }
 a { color:inherit; text-underline-offset:.22em; }
 a:hover { color:var(--signal); }
 .button,button,#add-collection-link,#edit-designer,#edit-collection { display:inline-block; min-width:150px; margin:.2rem 0; padding:.85rem 1rem; border:1px solid var(--paper); color:var(--ink); background:var(--paper); cursor:pointer; text-align:center; text-decoration:none; text-transform:uppercase; font:600 .7rem "IBM Plex Mono",monospace; letter-spacing:.08em; }
@@ -52,6 +54,14 @@ li:hover a,li:hover p { color:var(--ink); }
 #status.error { color:#ff4b39; }
 #designer-details,#collection-designer,#collection-season,#collection-status,#collection-piece-count { color:var(--dim); font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; }
 #designer-biography,#collection-description { max-width:75ch; font-size:clamp(1rem,1.5vw,1.35rem); }
+.profile-title { border-bottom:1px solid var(--paper); padding-bottom:2rem; }
+.profile-intro { display:grid; grid-template-columns:1fr 2fr; gap:4rem; margin:2rem 0; }
+.profile-intro #designer-biography { margin:0; }
+.external-link { text-transform:uppercase; font-size:.72rem; letter-spacing:.08em; }
+.section { margin-top:5rem; padding-top:1rem; border-top:1px solid var(--paper); }
+.section-heading { display:flex; align-items:baseline; justify-content:space-between; }
+.section-heading h2 { margin:0 0 2rem; font-size:clamp(2rem,6vw,5rem); }
+.section-heading span { color:var(--signal); font-size:.7rem; text-transform:uppercase; }
 .profile-flag { display:inline-block; margin-right:.55rem; font-family:sans-serif; font-size:clamp(1.35rem,2.2vw,2.15rem); line-height:1; vertical-align:.32em; white-space:nowrap; filter:grayscale(1) contrast(1.8); -webkit-filter:grayscale(1) contrast(1.8); }
 .collection-heading { display:grid; grid-template-columns:auto 1fr; align-items:start; gap:1.5rem; }
 .label-monogram { display:flex; align-items:center; justify-content:center; width:5rem; height:5rem; border:1px solid var(--signal); color:var(--signal); font-weight:600; letter-spacing:.08em; }
@@ -68,5 +78,7 @@ input:focus,select:focus,textarea:focus { border-color:var(--signal); box-shadow
 fieldset { display:grid; gap:1rem; margin:.5rem 0; padding:1.2rem; border:1px solid var(--line); }
 legend { padding:0 .5rem; color:var(--signal); font-size:.75rem; text-transform:uppercase; }
 small { color:var(--dim); }
-@media (max-width:760px) { .site-header{align-items:flex-start}.signal b{display:none}main{width:calc(100% - 1rem)}.hero{min-height:26vh}.hero .button{position:static;margin-top:2rem}#designer-list li{grid-column:span 12!important;min-height:190px}.collection-heading{grid-template-columns:1fr}.collection-list li a{grid-template-columns:2rem 1fr}.collection-list span{grid-column:2;text-align:left} }
+.site-footer { display:flex; justify-content:space-between; gap:1rem; padding:1.5rem clamp(1rem,3vw,2.5rem); border-top:1px solid var(--line); color:var(--dim); font-size:.65rem; letter-spacing:.08em; text-transform:uppercase; }
+.digital-signature { color:var(--paper); font-size:.75rem; letter-spacing:-.03em; text-transform:none; transform:rotate(-2deg); }
+@media (max-width:760px) { .site-header{align-items:flex-start}.signal b{display:none}main{width:calc(100% - 1rem)}.hero{min-height:26vh}.hero .button{position:static;margin-top:2rem}#designer-list li{grid-column:span 12!important;min-height:190px}.profile-intro{grid-template-columns:1fr;gap:1rem}.collection-heading{grid-template-columns:1fr}.collection-list li a{grid-template-columns:2rem 1fr}.collection-list span{grid-column:2;text-align:left}.site-footer{flex-direction:column} }
 @media (prefers-reduced-motion:reduce) { .signal i { animation:none; } }

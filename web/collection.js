@@ -32,8 +32,12 @@ async function loadCollection() {
         document.querySelector("#edit-collection").href =
             `/collection-form.html?collection_id=${collection.id}`;
 
+        document.querySelector("#collection-label").textContent =
+            collection.label;
+
         document.querySelector("#collection-title").textContent =
-            collection.name || collection.label;
+            collection.name ||
+            `${collection.season} ${collection.release_year}`;
 
         const designerLink = document.createElement("a");
         designerLink.textContent = collection.lead_designer;
@@ -76,7 +80,8 @@ async function loadCollection() {
             iframe.src =
                 `https://www.youtube.com/embed/${collection.youtube_video_id}`;
             iframe.title =
-                `${collection.label} runway video`;
+                `${collection.label} ${collection.season} ` +
+                `${collection.release_year} runway video`;
             iframe.allow =
                 "accelerometer; autoplay; clipboard-write; " +
                 "encrypted-media; gyroscope; picture-in-picture; web-share";

@@ -10,15 +10,15 @@
     <title>Collection | Collection Archive</title>
 </head>
 <body>
-    <nav class="site-header"><a class="brand" href="/"><span>ONE→MANY</span><small>DESIGN TRANSMISSION ARCHIVE</small></a><div class="signal-stack"><span class="signal"><i></i> LIVE DATABASE <b>CH. 000</b></span><span class="signature">(h)gaines.</span></div></nav><div class="ticker">DESIGNER → LABEL → SEASON → IMAGE → MOVEMENT → MEMORY → DESIGNER → LABEL → SEASON →</div>
+    <nav class="site-header"><a class="brand" href="/"><span>ONE→MANY</span><small>DESIGN TRANSMISSION ARCHIVE</small></a><div class="signal-stack"><span class="signal"><i></i> LIVE DATABASE <b>CH. 001</b></span><span class="signature">(h)gaines.</span></div></nav><div class="ticker">DESIGNER → LABEL → SEASON → IMAGE → MOVEMENT → MEMORY → DESIGNER → LABEL → SEASON →</div>
 
     <main>
         <p id="status">Loading collection...</p>
 
         <article id="collection" hidden>
-            <p class="eyebrow">COLLECTION RECORD / ARCHIVE FEED</p><div class="collection-heading">
+            <div class="collection-heading">
                 <span id="label-monogram" class="label-monogram"></span>
-                <h1 id="collection-title"></h1>
+                <div><p id="collection-label" class="eyebrow"></p><h1 id="collection-title"></h1></div>
             </div>
             <p id="collection-designer"></p>
             <p id="collection-season"></p>
@@ -30,7 +30,7 @@
                 <div id="collection-video" class="video-frame" hidden></div>
                 <p id="collection-source"></p>
             </section>
-            <p>
+            <div class="actions"><p>
                 <a id="edit-collection" href="#">
                     Edit collection
                 </a>
@@ -39,10 +39,13 @@
                 <button id="delete-collection" type="button">
                     Delete collection
                 </button>
-            </p>
+            </p></div>
         </article>
     </main>
 
+    <footer class="site-footer"><span>PUBLIC ACCESS / OPEN ARCHIVE</span><span class="digital-signature">(h)gaines.</span><span class="footer-year">NYC</span></footer>
+
+    <script src="/layout.js" defer></script>
     <script src="/collection.js" defer></script>
 </body>
 </html>

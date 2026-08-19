@@ -131,6 +131,37 @@ def test_migration_upgrades_legacy_data_and_preserves_user_records(
                 """
             ).fetchall()
         }
+        haider_profile = connection.execute(
+            """
+            SELECT nationality, birth_year, biography
+            FROM designers
+            WHERE full_name = 'Haider Ackermann'
+            """
+        ).fetchone()
+        haider_collections = {
+            (row["label"], row["release_year"])
+            for row in connection.execute(
+                """
+                SELECT collections.label, collections.release_year
+                FROM collections
+                JOIN designers
+                    ON designers.id = collections.designer_id
+                WHERE designers.full_name = 'Haider Ackermann'
+                """
+            ).fetchall()
+        }
+        haider_sources = connection.execute(
+            """
+            SELECT COUNT(*)
+            FROM collection_media
+            JOIN collections
+                ON collections.id = collection_media.collection_id
+            JOIN designers
+                ON designers.id = collections.designer_id
+            WHERE designers.full_name = 'Haider Ackermann'
+              AND collection_media.media_type = 'source'
+            """
+        ).fetchone()[0]
     finally:
         connection.close()
 
@@ -172,6 +203,15 @@ def test_migration_upgrades_legacy_data_and_preserves_user_records(
         "oYtZVDZWCes",
         "Yh_1K9s6UV0",
     } <= curated_videos
+    assert tuple(haider_profile[:2]) == ("French-Colombian", 1971)
+    assert haider_profile["biography"]
+    assert haider_collections == {
+        ("Haider Ackermann", 2011),
+        ("Berluti", 2017),
+        ("Jean Paul Gaultier", 2023),
+        ("Tom Ford", 2025),
+    }
+    assert haider_sources == 5
 
 
 def test_failed_migration_rolls_back_and_is_not_recorded(

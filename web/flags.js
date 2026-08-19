@@ -19,3 +19,7 @@ function nationalityFlags(nationality) {
         Russian: "🇷🇺",
     }[nationality] || "";
 }
+
+if (typeof module !== "undefined") {
+    module.exports = { nationalityFlags };
+}

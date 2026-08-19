@@ -29,6 +29,10 @@ async function loadDesigner() {
 
         const designer = await designerResponse.json();
         const collections = await collectionsResponse.json();
+        document.querySelector("#profile-id").textContent =
+            `DESIGNER PROFILE / ID ${String(designer.id).padStart(3, "0")}`;
+        document.querySelector("#collection-count").textContent =
+            `${String(collections.length).padStart(2, "0")} RECORDS`;
         document.querySelector("#edit-designer").href =
             `/designer-form.html?id=${designer.id}`;
 
@@ -53,7 +57,7 @@ async function loadDesigner() {
             const websiteLink = document.createElement("a");
 
             websiteLink.href = designer.website;
-            websiteLink.textContent = designer.website;
+            websiteLink.textContent = "Official transmission ↗";
             websiteLink.target = "_blank";
             websiteLink.rel = "noopener noreferrer";
 
