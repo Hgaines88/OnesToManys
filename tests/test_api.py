@@ -47,7 +47,7 @@ def test_list_designers(client):
 
     designers = response.json()
 
-    assert len(designers) == 29
+    assert len(designers) == 30
     designer_names = {
         designer["full_name"]
         for designer in designers
@@ -75,6 +75,7 @@ def test_list_designers(client):
         "Jil Sander",
         "Craig Green",
         "John Elliott",
+        "Haider Ackermann",
     } <= designer_names
 
 def test_get_designer(client):

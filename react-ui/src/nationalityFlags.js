@@ -6,13 +6,16 @@ const FLAGS_BY_NATIONALITY = {
   Canadian: "🇨🇦",
   "Dominican-American": "🇩🇴 🇺🇸",
   French: "🇫🇷",
+  "French-American": "🇫🇷 🇺🇸",
   "French-Belgian": "🇫🇷 🇧🇪",
+  "French-Colombian": "🇫🇷 🇨🇴",
   Georgian: "🇬🇪",
   German: "🇩🇪",
   Italian: "🇮🇹",
   Japanese: "🇯🇵",
   "Liberian-American": "🇱🇷 🇺🇸",
   "Northern Irish": "🇬🇧",
+  Russian: "🇷🇺",
 };
 
 export function nationalityFlags(nationality) {

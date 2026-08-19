@@ -7,12 +7,15 @@ function nationalityFlags(nationality) {
         Canadian: "🇨🇦",
         "Dominican-American": "🇩🇴 🇺🇸",
         French: "🇫🇷",
+        "French-American": "🇫🇷 🇺🇸",
         "French-Belgian": "🇫🇷 🇧🇪",
+        "French-Colombian": "🇫🇷 🇨🇴",
         Georgian: "🇬🇪",
         German: "🇩🇪",
         Italian: "🇮🇹",
         Japanese: "🇯🇵",
         "Liberian-American": "🇱🇷 🇺🇸",
         "Northern Irish": "🇬🇧",
+        Russian: "🇷🇺",
     }[nationality] || "";
 }

@@ -140,6 +140,7 @@ def test_migration_upgrades_legacy_data_and_preserves_user_records(
         "003_add_curated_runway_videos.sql",
         "004_add_demna_runway_video.sql",
         "005_preserve_curated_archive.sql",
+        "006_add_haider_ackermann_profile.sql",
     ]
     assert second_run == []
     assert migration_count == 1
